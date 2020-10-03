@@ -1,15 +1,14 @@
 package com.safetynet.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
+@AllArgsConstructor
 public class Individu {
 
-    private Integer idIdentity;
     private String lastName;
     private String firstName;
-    private LocalDate birthdate;
+
 
 }
