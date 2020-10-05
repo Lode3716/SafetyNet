@@ -6,6 +6,13 @@ import lombok.Data;
 public class Firestations {
 
     private String station;
-    private LocationMap locationMap;
+    private String address;
 
+    public Firestations() {
+    }
+
+    public Firestations(String station, String address) {
+        this.station = station;
+        this.address = address;
+    }
 }
