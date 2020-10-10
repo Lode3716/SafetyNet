@@ -86,14 +86,32 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
         return Boolean.FALSE;
     }
 
-    private boolean exist(Persons persons)
+    @Override
+    public boolean exist(Persons persons)
     {
-        log.info("Passe personn exist: "+persons);
-        log.info("Liste vide ou non : "+findAll().size());
         return findAll().stream()
                 .filter(search-> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()))
                 .findFirst()
                 .isPresent();
+    }
+
+    @Override
+    public Optional<Persons> update(Persons persons) {
+        if(exist(persons)) {
+            findAll().stream()
+                    .filter(search-> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()))
+                    .findFirst()
+                    .ifPresent(maj->
+                            {
+                                maj.setAddress(persons.getAddress());
+                                maj.setCity(persons.getCity());
+                                maj.setEmail(persons.getEmail());
+                                maj.setPhone(persons.getPhone());
+                                maj.setZip(persons.getZip());
+                            });
+            return Optional.of(persons);
+        }
+        return Optional.empty();
     }
 
 }

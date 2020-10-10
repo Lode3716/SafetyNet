@@ -27,7 +27,7 @@ public class PersonsController {
 
     @PostMapping(value = "/person")
     public ResponseEntity<Void> addPersons(@RequestBody Persons persons) {
-        log.info("Passe add person : "+persons);
+        log.info("Passe add person : " + persons);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
 
 
@@ -48,16 +48,33 @@ public class PersonsController {
     }
 
     @DeleteMapping(value = "/person")
-    public ResponseEntity<Void> deletePerson(@RequestBody Persons person)
-    {
-        log.info("Passe personn delete : "+person);
-        Boolean retour=repositorPersons.getPersonsRepository().delete(person);
+    public ResponseEntity<Void> deletePerson(@RequestBody Persons person) {
+        log.info("Passe personn delete : " + person);
+        Boolean retour = repositorPersons.getPersonsRepository().delete(person);
 
-        if (!retour)
-        {
+        if (!retour) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/person")
+    public ResponseEntity<Void> updatePerson(@RequestBody Persons person) {
+        log.info("Passe personn update : " + person);
+        AtomicReference<ResponseEntity> rep = new AtomicReference<>();
+        repositorPersons.getPersonsRepository().update(person)
+                .ifPresentOrElse(retour ->
+                {
+                    URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nom}/{prenom}")
+                            .buildAndExpand(person.getLastName(), person.getFirstName())
+                            .toUri();
+                    rep.set(ResponseEntity.created(location).build());
+                }, () ->
+                {
+                    rep.set(ResponseEntity.noContent().build());
+                });
+
+        return rep.get();
     }
 
 }

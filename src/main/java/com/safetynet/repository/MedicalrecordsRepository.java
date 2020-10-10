@@ -68,4 +68,14 @@ public class MedicalrecordsRepository implements BuisnessRepo<Medicalrecords> {
     public boolean delete(Medicalrecords medicalrecords) {
         return false;
     }
+
+    @Override
+    public boolean exist(Medicalrecords objet) {
+        return false;
+    }
+
+    @Override
+    public Optional<Medicalrecords> update(Medicalrecords objet) {
+        return Optional.empty();
+    }
 }

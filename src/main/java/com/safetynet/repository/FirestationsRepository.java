@@ -66,4 +66,14 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
     public boolean delete(Firestations firestations) {
         return false;
     }
+
+    @Override
+    public boolean exist(Firestations objet) {
+        return false;
+    }
+
+    @Override
+    public Optional<Firestations> update(Firestations objet) {
+        return Optional.empty();
+    }
 }

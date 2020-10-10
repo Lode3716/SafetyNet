@@ -13,4 +13,8 @@ public interface BuisnessRepo<T> {
 
     public boolean delete(T objet);
 
+    public boolean exist(T objet);
+
+    public Optional<T> update(T objet);
+
 }
