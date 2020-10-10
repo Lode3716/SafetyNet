@@ -3,7 +3,6 @@ package com.safetynet.repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.dao.UtilsDao;
-import com.safetynet.model.Individu;
 import com.safetynet.model.Persons;
 import com.safetynet.utils.ParseJSON;
 import lombok.Getter;
@@ -11,14 +10,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Log4j2
 @Repository
@@ -80,16 +77,23 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     }
 
     @Override
-    public void remove(Persons persons) {
-
+    public boolean delete(Persons persons) {
+        if(exist(persons))
+        {
+            findAll().remove(persons);
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 
     private boolean exist(Persons persons)
     {
+        log.info("Passe personn exist: "+persons);
+        log.info("Liste vide ou non : "+findAll().size());
         return findAll().stream()
                 .filter(search-> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()))
-                .anyMatch(this::exist);
-
+                .findFirst()
+                .isPresent();
     }
 
 }

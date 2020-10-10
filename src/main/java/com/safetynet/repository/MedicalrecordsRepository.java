@@ -65,7 +65,7 @@ public class MedicalrecordsRepository implements BuisnessRepo<Medicalrecords> {
     }
 
     @Override
-    public void remove(Medicalrecords medicalrecords) {
-
+    public boolean delete(Medicalrecords medicalrecords) {
+        return false;
     }
 }

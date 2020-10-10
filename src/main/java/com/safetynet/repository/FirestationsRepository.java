@@ -59,11 +59,11 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
 
     @Override
     public Optional<Firestations> add(Firestations firestations) {
-      return Optional.empty();
+        return Optional.empty();
     }
 
     @Override
-    public void remove(Firestations firestations) {
-
+    public boolean delete(Firestations firestations) {
+        return false;
     }
 }
