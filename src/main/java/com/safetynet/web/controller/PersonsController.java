@@ -60,9 +60,8 @@ public class PersonsController {
     public ResponseEntity<Void> deletePerson(@RequestBody Persons person) {
         log.info("Passe personn delete : " + person);
         Boolean retour = repositorPersons.getPersonsRepository().delete(person);
-
         if (!retour) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new PersonsIntrouvableException("La personne se nommant "+person.getLastName() + "est introuvable.");
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
