@@ -1,11 +1,16 @@
 package com.safetynet.repository;
 
-public interface BuisnessRepo {
+import java.util.List;
+import java.util.Optional;
 
-    public void read(byte[] jsonData);
+public interface BuisnessRepo<T> {
 
-    public void add(byte[] jsonData);
+    public List<T> findAllInit();
 
-    public void remove(byte[] jsonData);
+    public List<T> findAll();
+
+    public Optional<T> add(T objet);
+
+    public void remove(T objet);
 
 }

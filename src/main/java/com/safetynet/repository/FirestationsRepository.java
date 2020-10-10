@@ -2,23 +2,38 @@ package com.safetynet.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.safetynet.dao.UtilsDao;
 import com.safetynet.model.Firestations;
 import com.safetynet.utils.ParseJSON;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
-public class FirestationsRepository implements BuisnessRepo {
+@Repository
+public class FirestationsRepository implements BuisnessRepo<Firestations> {
 
     private ParseJSON json = new ParseJSON();
+    private byte[] jsonData = new byte[0];
+    @Getter
+    private List<Firestations> firestationsList;
+
+    public FirestationsRepository() {
+        this.firestationsList = LoadListInit.getFirestationsList();
+    }
 
     @Override
-    public void read(byte[] jsonData) {
+    public List<Firestations> findAllInit() {
         List<Firestations> firestationsList = new ArrayList<>();
         try {
+            jsonData = Files.readAllBytes(Paths.get(UtilsDao.FILE_NAME));
             json.parseJsonObject("firestations", jsonData)
                     .elements()
                     .forEachRemaining(s -> {
@@ -34,16 +49,21 @@ public class FirestationsRepository implements BuisnessRepo {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        firestationsList.forEach(s -> log.info("Parse " + s));
+        return firestationsList;
     }
 
     @Override
-    public void add(byte[] jsonData) {
-
+    public List<Firestations> findAll() {
+        return getFirestationsList();
     }
 
     @Override
-    public void remove(byte[] jsonData) {
+    public Optional<Firestations> add(Firestations firestations) {
+      return Optional.empty();
+    }
+
+    @Override
+    public void remove(Firestations firestations) {
 
     }
 }

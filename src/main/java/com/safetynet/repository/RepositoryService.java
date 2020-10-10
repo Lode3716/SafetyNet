@@ -1,6 +1,7 @@
 package com.safetynet.repository;
 
-import com.safetynet.model.Persons;
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 public interface RepositoryService {
 

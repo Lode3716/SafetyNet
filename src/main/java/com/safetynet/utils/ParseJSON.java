@@ -4,13 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.safetynet.model.Persons;
 import lombok.extern.log4j.Log4j2;
-import org.json.JSONArray;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Log4j2
@@ -19,7 +15,7 @@ public class ParseJSON {
     ObjectMapper objectMapper = new ObjectMapper();
 
 
-    public List<Persons> analysePersonnJSON(JSONArray array) {
+    /*public List<Persons> analysePersonnJSON(JSONArray array) {
         List<Persons> listPersons = new ArrayList<>();
 
         for (int i = 0; i < array.length(); i++) {
@@ -42,7 +38,7 @@ public class ParseJSON {
                     .build());
         }
         return listPersons;
-    }
+    }*/
 
     public JsonNode parseJsonObject(String nameKey, byte[] jsonData) throws IOException {
 
