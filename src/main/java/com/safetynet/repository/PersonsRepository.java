@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Log4j2
 @Repository
@@ -112,6 +113,19 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
             return Optional.of(persons);
         }
         return Optional.empty();
+    }
+
+    public Optional<Persons> finByElements(String nom, String prenom) {
+log.info("finby elements : "+nom+" / "+prenom);
+        AtomicReference<Persons> atomicPers=new AtomicReference<>();
+            findAll().stream()
+                    .filter(search-> nom.equals(search.getLastName()) && prenom.equals(search.getFirstName()))
+                    .findFirst()
+                    .ifPresent(searchPers->
+                    {
+                        atomicPers.set(searchPers);
+                    });
+            return Optional.of(atomicPers.get());
     }
 
 }

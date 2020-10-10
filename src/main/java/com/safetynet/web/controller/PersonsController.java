@@ -2,6 +2,7 @@ package com.safetynet.web.controller;
 
 import com.safetynet.model.Persons;
 import com.safetynet.repository.RepositoryService;
+import com.safetynet.web.exceptions.PersonsIntrouvableException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,14 @@ public class PersonsController {
     @GetMapping(value = "persons")
     public List<Persons> readAllpersons() {
         return repositorPersons.getPersonsRepository().findAll();
+    }
+
+    @GetMapping(value = "person/{nom}/{prenom}")
+    public Persons readPerson( @PathVariable("nom") String nom,@PathVariable("prenom") String prenom)
+    {
+        log.info("Entre dans dinbyElements "+nom+" "+prenom);
+        return repositorPersons.getPersonsRepository().finByElements(nom,prenom)
+                .orElseThrow(()->new PersonsIntrouvableException("La personne se nommant "+nom+" "+prenom+ "est introuvable."));
     }
 
     @PostMapping(value = "/person")
