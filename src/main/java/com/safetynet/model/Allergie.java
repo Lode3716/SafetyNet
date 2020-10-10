@@ -8,13 +8,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@JsonDeserialize(builder = Allergie.AllergieBuilder.class)
 public class Allergie {
 
     private String name;
 
-    @Builder
     public Allergie(@JsonProperty("allergie") String name) {
         this.name = name;
     }

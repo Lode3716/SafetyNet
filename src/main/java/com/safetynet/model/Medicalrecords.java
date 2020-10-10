@@ -13,14 +13,5 @@ public class Medicalrecords {
     private List<String> medications;
     private List<String> allergies;
 
-    public Medicalrecords() {
-    }
 
-    public Medicalrecords(String firstName, String lastName, String birthdate, List<String> medications, List<String> allergies) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthdate = birthdate;
-        this.medications = medications;
-        this.allergies = allergies;
-    }
 }

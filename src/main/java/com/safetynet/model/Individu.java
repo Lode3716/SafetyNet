@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString()
 public class Individu {
 
@@ -15,5 +13,11 @@ public class Individu {
     private String firstName;
     private String lastName;
 
+    public Individu() {
+    }
 
+    public Individu(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 }
