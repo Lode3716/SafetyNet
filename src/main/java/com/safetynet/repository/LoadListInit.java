@@ -4,12 +4,12 @@ import com.safetynet.model.Firestations;
 import com.safetynet.model.Medicalrecords;
 import com.safetynet.model.Persons;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,22 +20,22 @@ public class LoadListInit {
     @Getter
     private static List<Persons> personsList;
     @Getter
-    private static List<Medicalrecords> medicalrecordsList;
+    public static List<Medicalrecords> medicalrecordsList;
     @Getter
     private static List<Firestations> firestationsList;
 
     @Autowired
     RepositoryService repositoryService;
 
+
     @PostConstruct
     public void init() {
         personsList = repositoryService.getPersonsRepository().findAllInit();
         medicalrecordsList = repositoryService.getMedicalrecordsRepository().findAllInit();
         firestationsList = repositoryService.getFirestationsRepository().findAllInit();
-        log.info("Size medicalrecordsList : " +medicalrecordsList.size()+" / personsList : "+personsList.size()+" / firestationsList :"+firestationsList.size());
+        log.info("Size medicalrecordsList : " + medicalrecordsList.size() + " / personsList : " + personsList.size() + " / firestationsList :" + firestationsList.size());
         contrustPersonsList();
     }
-
 
 
     private List<Persons> contrustPersonsList() {

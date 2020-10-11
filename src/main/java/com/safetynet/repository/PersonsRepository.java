@@ -26,15 +26,14 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     private byte[] jsonData = new byte[0];
 
     @Autowired
-    RepositoryService repositoryService;
+    LoadListInit loadListInit;
 
     @Getter
     private List<Persons> personsList;
 
 
-    public PersonsRepository()
-    {
-        this.personsList=LoadListInit.getPersonsList();
+    public PersonsRepository() {
+        this.personsList = LoadListInit.getPersonsList();
     }
 
     @Override
@@ -63,24 +62,23 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
 
     @Override
     public List<Persons> findAll() {
-       return getPersonsList();
+        return getPersonsList();
     }
 
     @Override
     public Optional<Persons> add(Persons persons) {
-        if(exist(persons)==Boolean.FALSE)
-        {
-            findAll().add(persons);
+        if (exist(persons) == Boolean.FALSE) {
+            findAll().add(contrustPersons(persons));
             return Optional.of(persons);
-        };
+        }
+        ;
 
         return Optional.empty();
     }
 
     @Override
     public boolean delete(Persons persons) {
-        if(exist(persons))
-        {
+        if (exist(persons)) {
             findAll().remove(persons);
             return Boolean.TRUE;
         }
@@ -88,44 +86,67 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     }
 
     @Override
-    public boolean exist(Persons persons)
-    {
+    public boolean exist(Persons persons) {
         return findAll().stream()
-                .filter(search-> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()))
+                .filter(search -> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()))
                 .findFirst()
                 .isPresent();
     }
 
     @Override
     public Optional<Persons> update(Persons persons) {
-        if(exist(persons)) {
+        if (exist(persons)) {
             findAll().stream()
-                    .filter(search-> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()))
+                    .filter(search -> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()))
                     .findFirst()
-                    .ifPresent(maj->
-                            {
-                                maj.setAddress(persons.getAddress());
-                                maj.setCity(persons.getCity());
-                                maj.setEmail(persons.getEmail());
-                                maj.setPhone(persons.getPhone());
-                                maj.setZip(persons.getZip());
-                            });
-            return Optional.of(persons);
+                    .ifPresent(maj ->
+                    {
+                        maj.setAddress(persons.getAddress());
+                        maj.setCity(persons.getCity());
+                        maj.setEmail(persons.getEmail());
+                        maj.setPhone(persons.getPhone());
+                        maj.setZip(persons.getZip());
+                    });
+            return Optional.of(contrustPersons(persons));
         }
         return Optional.empty();
     }
 
     public Optional<Persons> finByElements(String nom, String prenom) {
-log.info("finby elements : "+nom+" / "+prenom);
-        AtomicReference<Persons> atomicPers=new AtomicReference<>();
-            findAll().stream()
-                    .filter(search-> nom.equals(search.getLastName()) && prenom.equals(search.getFirstName()))
-                    .findFirst()
-                    .ifPresent(searchPers->
-                    {
-                        atomicPers.set(searchPers);
-                    });
-            return Optional.of(atomicPers.get());
+        log.info("finby elements : " + nom + " / " + prenom);
+        AtomicReference<Persons> atomicPers = new AtomicReference<>();
+        findAll().stream()
+                .filter(search -> nom.equals(search.getLastName()) && prenom.equals(search.getFirstName()))
+                .findFirst()
+                .ifPresent(searchPers ->
+                {
+                    atomicPers.set(searchPers);
+                });
+        if (atomicPers.get() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(atomicPers.get());
     }
 
+
+    private Persons contrustPersons(Persons persons) {
+        loadListInit.getMedicalrecordsList()
+                .forEach(medicalrecords ->
+                {
+                    if (persons.getFirstName().equals(medicalrecords.getFirstName()) && persons.getLastName().equals(medicalrecords.getLastName())) {
+                        persons.setMedicalrecords(medicalrecords);
+                    }
+                });
+        loadListInit.getFirestationsList()
+                .forEach(firestations ->
+                        {
+                            if (persons.getAddress().equals(firestations.getAddress())) {
+                                persons.setFirestations(firestations);
+                            }
+                        }
+                );
+        log.info("Construit une personne : "+persons);
+        return persons;
+
+    }
 }
