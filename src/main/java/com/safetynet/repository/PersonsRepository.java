@@ -31,7 +31,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
             database.getPersonsList().add(contrustPersons(persons));
             return Optional.of(persons);
         }
-        ;
+
 
         return Optional.empty();
     }
@@ -47,10 +47,9 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
 
     @Override
     public boolean exist(Persons persons) {
-        return database.getPersonsList().stream()
-                .filter(search -> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()))
-                .findFirst()
-                .isPresent();
+        return database.getPersonsList()
+                .stream()
+                .anyMatch(search -> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()));
     }
 
     @Override
