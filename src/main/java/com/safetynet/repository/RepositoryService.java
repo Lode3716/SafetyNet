@@ -5,7 +5,7 @@ public interface RepositoryService {
 
     FirestationsRepository getFirestationsRepository();
 
-    MedicalrecordsRepository getMedicalrecordsRepository();
+    MedicalRecordsRepository getMedicalrecordsRepository();
 
     PersonsRepository getPersonsRepository();
 }

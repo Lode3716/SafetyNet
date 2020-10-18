@@ -16,8 +16,8 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
     @Override
-    public MedicalrecordsRepository getMedicalrecordsRepository() {
-        return new MedicalrecordsRepository();
+    public MedicalRecordsRepository getMedicalrecordsRepository() {
+        return new MedicalRecordsRepository();
     }
 
     @Override

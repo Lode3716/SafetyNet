@@ -34,7 +34,7 @@ public class PersonsController {
                 .orElseThrow(()->new PersonsIntrouvableException("La personne se nommant "+nom+" "+prenom+ "est introuvable."));
     }
 
-    @PostMapping(value = "/person")
+    @PostMapping(value = "person")
     public ResponseEntity<Void> addPersons(@RequestBody Persons persons) {
         log.info("Passe add person : " + persons);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
@@ -56,7 +56,7 @@ public class PersonsController {
         return rep.get();
     }
 
-    @DeleteMapping(value = "/person")
+    @DeleteMapping(value = "person")
     public ResponseEntity<Void> deletePerson(@RequestBody Persons person) {
         log.info("Passe personn delete : " + person);
         Boolean retour = repositorPersons.getPersonsRepository().delete(person);
@@ -66,7 +66,7 @@ public class PersonsController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping(value = "/person")
+    @PutMapping(value = "person")
     public ResponseEntity<Void> updatePerson(@RequestBody Persons person) {
         log.info("Passe personn update : " + person);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
