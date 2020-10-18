@@ -1,16 +1,16 @@
-package com.safetynet.repository;
+package com.safetynet.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.safetynet.dao.UtilsDao;
 import com.safetynet.model.Firestations;
 import com.safetynet.model.Medicalrecords;
 import com.safetynet.model.Persons;
 import com.safetynet.utils.ParseJSON;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -22,18 +22,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Log4j2
+@AllArgsConstructor
 @Component
 public class Database {
 
     @Getter
-    private List<Persons> personsList;
+    public static List<Persons> personsList;
     @Getter
-    public List<Medicalrecords> medicalrecordsList;
+    public static List<Medicalrecords> medicalrecordsList;
     @Getter
-    private List<Firestations> firestationsList;
+    public static List<Firestations> firestationsList;
 
     private ParseJSON json = new ParseJSON();
     private byte[] jsonData = new byte[0];
+
+    public Database() {
+    }
 
 
     @PostConstruct
@@ -41,9 +45,11 @@ public class Database {
         personsList = findAllInitPersonne();
         medicalrecordsList = findAllInitMedicalrecords();
         firestationsList = findAllInitFirestation();
-        log.info("Size medicalrecordsList : " + medicalrecordsList.size() + " / personsList : " + personsList.size() + " / firestationsList :" + firestationsList.size());
         contrustPersonsList();
+        log.info("Size medicalrecordsList : " + medicalrecordsList.size() + " / personsList : " + personsList.size() + " / firestationsList :" + firestationsList.size());
+
     }
+
 
     public List<Persons> findAllInitPersonne() {
         List<Persons> persons2 = new ArrayList<>();
@@ -89,6 +95,7 @@ public class Database {
         }
         return firestationsList;
     }
+
     public List<Medicalrecords> findAllInitMedicalrecords() {
         List<Medicalrecords> medicalrecordsList = new ArrayList<>();
         try {

@@ -1,8 +1,11 @@
 package com.safetynet.repository;
 
+import com.safetynet.dao.Database;
 import com.safetynet.model.Persons;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,16 +22,22 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     @Autowired
     RepositoryService repositoryService;
 
+    @Getter
+    List<Persons> personsList;
+
+    public PersonsRepository() {
+        this.personsList=database.getPersonsList();
+    }
 
     @Override
     public List<Persons> findAll() {
-        return database.getPersonsList();
+        return getPersonsList();
     }
 
     @Override
     public Optional<Persons> add(Persons persons) {
         if (exist(persons) == Boolean.FALSE) {
-            database.getPersonsList().add(contrustPersons(persons));
+            getPersonsList().add(contrustPersons(persons));
             return Optional.of(persons);
         }
 
@@ -39,7 +48,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     @Override
     public boolean delete(Persons persons) {
         if (exist(persons)) {
-            database.getPersonsList().remove(persons);
+            getPersonsList().remove(persons);
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
@@ -47,7 +56,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
 
     @Override
     public boolean exist(Persons persons) {
-        return database.getPersonsList()
+        return getPersonsList()
                 .stream()
                 .anyMatch(search -> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()));
     }
@@ -55,7 +64,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     @Override
     public Optional<Persons> update(Persons persons) {
         if (exist(persons)) {
-            database.getPersonsList().stream()
+            getPersonsList().stream()
                     .filter(search -> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()))
                     .findFirst()
                     .ifPresent(maj ->
@@ -74,7 +83,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     public Optional<Persons> finByElements(String nom, String prenom) {
         log.info("finby elements : " + nom + " / " + prenom);
         AtomicReference<Persons> atomicPers = new AtomicReference<>();
-        database.getPersonsList().stream()
+        getPersonsList().stream()
                 .filter(search -> nom.equals(search.getLastName()) && prenom.equals(search.getFirstName()))
                 .findFirst()
                 .ifPresent(searchPers ->
@@ -90,7 +99,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
 
     private Persons contrustPersons(Persons persons) {
 
-        repositoryService.getMedicalrecordsRepository().findAll().forEach(medicalrecords ->
+        database.getMedicalrecordsList().forEach(medicalrecords ->
         {
             if (persons.getFirstName().equals(medicalrecords.getFirstName()) && persons.getLastName().equals(medicalrecords.getLastName())) {
                 persons.setMedicalrecords(medicalrecords);

@@ -1,6 +1,8 @@
 package com.safetynet.repository;
 
+import com.safetynet.dao.Database;
 import com.safetynet.model.Medicalrecords;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -15,12 +17,16 @@ public class MedicalrecordsRepository implements BuisnessRepo<Medicalrecords> {
     @Autowired
     Database database;
 
+    @Getter
+    public List<Medicalrecords> medicalrecordsList;
+
     public MedicalrecordsRepository() {
+        this.medicalrecordsList =database.getMedicalrecordsList();
     }
 
     @Override
     public List<Medicalrecords> findAll() {
-        return database.medicalrecordsList;
+        return getMedicalrecordsList();
     }
 
     @Override

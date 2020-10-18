@@ -9,7 +9,8 @@ public interface BuisnessRepo<T> {
 
     public Optional<T> add(T objet);
 
-    public boolean delete(T objet);
+
+    public  boolean delete(T objet);
 
     public boolean exist(T objet);
 
