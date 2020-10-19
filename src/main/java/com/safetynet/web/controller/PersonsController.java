@@ -1,5 +1,7 @@
 package com.safetynet.web.controller;
 
+import com.googlecode.jmapper.JMapper;
+import com.safetynet.dto.PersonsDto;
 import com.safetynet.model.Persons;
 import com.safetynet.repository.RepositoryService;
 import com.safetynet.web.exceptions.PersonsIntrouvableException;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -22,16 +25,23 @@ public class PersonsController {
     RepositoryService repositorPersons;
 
     @GetMapping(value = "persons")
-    public List<Persons> readAllpersons() {
-        return repositorPersons.getPersonsRepository().findAll();
+    public List<PersonsDto> readAllpersons() {
+        JMapper<PersonsDto, Persons> personMapper = new JMapper<>(PersonsDto.class, Persons.class);
+        List<PersonsDto> list = new ArrayList<>();
+        repositorPersons.getPersonsRepository().findAll().forEach(persons ->
+                {
+                    list.add(personMapper.getDestination(persons));
+                }
+        );
+        log.info("Dto : " + list.size());
+        return list;
     }
 
     @GetMapping(value = "person/{nom}/{prenom}")
-    public Persons readPerson( @PathVariable("nom") String nom,@PathVariable("prenom") String prenom)
-    {
-        log.info("Entre dans dinbyElements "+nom+" "+prenom);
-        return repositorPersons.getPersonsRepository().finByElements(nom,prenom)
-                .orElseThrow(()->new PersonsIntrouvableException("La personne se nommant "+nom+" "+prenom+ "est introuvable."));
+    public Persons readPerson(@PathVariable("nom") String nom, @PathVariable("prenom") String prenom) {
+        log.info("Entre dans dinbyElements " + nom + " " + prenom);
+        return repositorPersons.getPersonsRepository().finByElements(nom, prenom)
+                .orElseThrow(() -> new PersonsIntrouvableException("La personne se nommant " + nom + " " + prenom + "est introuvable."));
     }
 
     @PostMapping(value = "person")
@@ -61,7 +71,7 @@ public class PersonsController {
         log.info("Passe personn delete : " + person);
         Boolean retour = repositorPersons.getPersonsRepository().delete(person);
         if (!retour) {
-            throw new PersonsIntrouvableException("La personne se nommant "+person.getLastName() + "est introuvable.");
+            throw new PersonsIntrouvableException("La personne se nommant " + person.getLastName() + "est introuvable.");
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
