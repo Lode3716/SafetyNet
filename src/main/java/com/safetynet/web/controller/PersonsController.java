@@ -24,16 +24,18 @@ public class PersonsController {
     @Autowired
     RepositoryService repositorPersons;
 
+    JMapper<PersonsDto, Persons> personMapper = new JMapper<>(PersonsDto.class, Persons.class);
+    JMapper<Persons, PersonsDto> personUnMapper = new JMapper<>( Persons.class,PersonsDto.class);
+
     @GetMapping(value = "persons")
     public List<PersonsDto> readAllpersons() {
-        JMapper<PersonsDto, Persons> personMapper = new JMapper<>(PersonsDto.class, Persons.class);
+
         List<PersonsDto> list = new ArrayList<>();
         repositorPersons.getPersonsRepository().findAll().forEach(persons ->
                 {
                     list.add(personMapper.getDestination(persons));
                 }
         );
-        log.info("Dto : " + list.size());
         return list;
     }
 
@@ -45,12 +47,11 @@ public class PersonsController {
     }
 
     @PostMapping(value = "person")
-    public ResponseEntity<Void> addPersons(@RequestBody Persons persons) {
+    public ResponseEntity<Void> addPersons(@RequestBody PersonsDto persons) {
         log.info("Passe add person : " + persons);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
 
-
-        repositorPersons.getPersonsRepository().add(persons)
+        repositorPersons.getPersonsRepository().add(personUnMapper.getDestination(persons))
                 .ifPresentOrElse(retour ->
                 {
                     URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nom}/{prenom}")
@@ -67,9 +68,10 @@ public class PersonsController {
     }
 
     @DeleteMapping(value = "person")
-    public ResponseEntity<Void> deletePerson(@RequestBody Persons person) {
+    public ResponseEntity<Void> deletePerson(@RequestBody PersonsDto person) {
         log.info("Passe personn delete : " + person);
-        Boolean retour = repositorPersons.getPersonsRepository().delete(person);
+
+        Boolean retour = repositorPersons.getPersonsRepository().delete(personUnMapper.getDestination(person));
         if (!retour) {
             throw new PersonsIntrouvableException("La personne se nommant " + person.getLastName() + "est introuvable.");
         }
@@ -77,10 +79,10 @@ public class PersonsController {
     }
 
     @PutMapping(value = "person")
-    public ResponseEntity<Void> updatePerson(@RequestBody Persons person) {
+    public ResponseEntity<Void> updatePerson(@RequestBody PersonsDto person) {
         log.info("Passe personn update : " + person);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
-        repositorPersons.getPersonsRepository().update(person)
+        repositorPersons.getPersonsRepository().update(personUnMapper.getDestination(person))
                 .ifPresentOrElse(retour ->
                 {
                     URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nom}/{prenom}")
