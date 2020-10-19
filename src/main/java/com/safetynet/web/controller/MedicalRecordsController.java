@@ -2,9 +2,7 @@ package com.safetynet.web.controller;
 
 import com.googlecode.jmapper.JMapper;
 import com.safetynet.dto.MedicalRecordsDTO;
-import com.safetynet.dto.PersonsDto;
 import com.safetynet.model.Medicalrecords;
-import com.safetynet.model.Persons;
 import com.safetynet.repository.RepositoryService;
 import com.safetynet.web.exceptions.MedicalrecordsIntrouvablesException;
 import lombok.extern.log4j.Log4j2;
@@ -27,7 +25,7 @@ public class MedicalRecordsController {
     RepositoryService repositorMedicalRecords;
 
     JMapper<MedicalRecordsDTO, Medicalrecords> medicalRecordsMapper = new JMapper<>(MedicalRecordsDTO.class, Medicalrecords.class);
-    JMapper<Medicalrecords, MedicalRecordsDTO> medicalRecordsUnMapper = new JMapper<>( Medicalrecords.class,MedicalRecordsDTO.class);
+    JMapper<Medicalrecords, MedicalRecordsDTO> medicalRecordsUnMapper = new JMapper<>(Medicalrecords.class, MedicalRecordsDTO.class);
 
     @GetMapping(value = "medicalRecord")
     public List<MedicalRecordsDTO> readAllMedicalRecords() {
