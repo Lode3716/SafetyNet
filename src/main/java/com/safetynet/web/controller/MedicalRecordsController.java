@@ -1,6 +1,10 @@
 package com.safetynet.web.controller;
 
+import com.googlecode.jmapper.JMapper;
+import com.safetynet.dto.MedicalRecordsDTO;
+import com.safetynet.dto.PersonsDto;
 import com.safetynet.model.Medicalrecords;
+import com.safetynet.model.Persons;
 import com.safetynet.repository.RepositoryService;
 import com.safetynet.web.exceptions.MedicalrecordsIntrouvablesException;
 import lombok.extern.log4j.Log4j2;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -21,18 +26,28 @@ public class MedicalRecordsController {
     @Autowired
     RepositoryService repositorMedicalRecords;
 
+    JMapper<MedicalRecordsDTO, Medicalrecords> medicalRecordsMapper = new JMapper<>(MedicalRecordsDTO.class, Medicalrecords.class);
+    JMapper<Medicalrecords, MedicalRecordsDTO> medicalRecordsUnMapper = new JMapper<>( Medicalrecords.class,MedicalRecordsDTO.class);
+
     @GetMapping(value = "medicalRecord")
-    public List<Medicalrecords> readAllMedicalRecords() {
-        return repositorMedicalRecords.getMedicalrecordsRepository().findAll();
+    public List<MedicalRecordsDTO> readAllMedicalRecords() {
+
+        List<MedicalRecordsDTO> list = new ArrayList<>();
+
+        repositorMedicalRecords.getMedicalrecordsRepository().findAll().forEach(medeicals ->
+        {
+            list.add(medicalRecordsMapper.getDestination(medeicals));
+        });
+        return list;
     }
 
     @PostMapping(value = "medicalRecord")
-    public ResponseEntity<Void> addMedicalRecord(@RequestBody Medicalrecords medicalrecords) {
+    public ResponseEntity<Void> addMedicalRecord(@RequestBody MedicalRecordsDTO medicalrecords) {
         log.info("Add medicalrecords : " + medicalrecords);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
 
         repositorMedicalRecords.getMedicalrecordsRepository()
-                .add(medicalrecords)
+                .add(medicalRecordsUnMapper.getDestination(medicalrecords))
                 .ifPresentOrElse(retour ->
                 {
                     URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{prenom}/{nom}")
@@ -48,10 +63,10 @@ public class MedicalRecordsController {
     }
 
     @PutMapping(value = "medicalRecord")
-    public ResponseEntity<Void> updateMedicalrecord(@RequestBody Medicalrecords medicalRecord) {
+    public ResponseEntity<Void> updateMedicalrecord(@RequestBody MedicalRecordsDTO medicalRecord) {
         log.info("Update medicalRecord : " + medicalRecord);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
-        repositorMedicalRecords.getMedicalrecordsRepository().update(medicalRecord)
+        repositorMedicalRecords.getMedicalrecordsRepository().update(medicalRecordsUnMapper.getDestination(medicalRecord))
                 .ifPresentOrElse(retour ->
                 {
                     URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nom}/{prenom}")
@@ -67,9 +82,9 @@ public class MedicalRecordsController {
     }
 
     @DeleteMapping(value = "medicalRecord")
-    public ResponseEntity<Void> deletePerson(@RequestBody Medicalrecords medicalRecord) {
+    public ResponseEntity<Void> deletePerson(@RequestBody MedicalRecordsDTO medicalRecord) {
         log.info("Delete medicalRecord :  " + medicalRecord);
-        Boolean retour = repositorMedicalRecords.getMedicalrecordsRepository().delete(medicalRecord);
+        Boolean retour = repositorMedicalRecords.getMedicalrecordsRepository().delete(medicalRecordsUnMapper.getDestination(medicalRecord));
         if (!retour) {
             throw new MedicalrecordsIntrouvablesException("La personne se nommant " + medicalRecord.getLastName() + "est introuvable.");
         }
