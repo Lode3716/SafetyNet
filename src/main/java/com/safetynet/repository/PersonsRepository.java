@@ -22,22 +22,16 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     @Autowired
     RepositoryService repositoryService;
 
-    @Getter
-    List<Persons> personsList;
-
-    public PersonsRepository() {
-        this.personsList=database.getPersonsList();
-    }
 
     @Override
     public List<Persons> findAll() {
-        return getPersonsList();
+        return database.getPersonsList();
     }
 
     @Override
     public Optional<Persons> add(Persons persons) {
         if (exist(persons) == Boolean.FALSE) {
-            getPersonsList().add(contrustPersons(persons));
+            database.getPersonsList().add(contrustPersons(persons));
             return Optional.of(persons);
         }
 
@@ -48,7 +42,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     @Override
     public boolean delete(Persons persons) {
         if (exist(persons)) {
-            getPersonsList().remove(persons);
+            database.getPersonsList().remove(persons);
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
@@ -56,7 +50,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
 
     @Override
     public boolean exist(Persons persons) {
-        return getPersonsList()
+        return database.getPersonsList()
                 .stream()
                 .anyMatch(search -> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()));
     }
@@ -64,7 +58,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     @Override
     public Optional<Persons> update(Persons persons) {
         if (exist(persons)) {
-            getPersonsList().stream()
+            database.getPersonsList().stream()
                     .filter(search -> persons.getLastName().equals(search.getLastName()) && persons.getFirstName().equals(search.getFirstName()))
                     .findFirst()
                     .ifPresent(maj ->
@@ -83,7 +77,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     public Optional<Persons> finByElements(String nom, String prenom) {
         log.info("finby elements : " + nom + " / " + prenom);
         AtomicReference<Persons> atomicPers = new AtomicReference<>();
-        getPersonsList().stream()
+        database.getPersonsList().stream()
                 .filter(search -> nom.equals(search.getLastName()) && prenom.equals(search.getFirstName()))
                 .findFirst()
                 .ifPresent(searchPers ->

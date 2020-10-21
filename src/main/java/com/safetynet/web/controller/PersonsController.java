@@ -24,8 +24,11 @@ public class PersonsController {
     @Autowired
     RepositoryService repositorPersons;
 
-    JMapper<PersonsDto, Persons> personMapper = new JMapper<>(PersonsDto.class, Persons.class);
-    JMapper<Persons, PersonsDto> personUnMapper = new JMapper<>( Persons.class,PersonsDto.class);
+    @Autowired
+    JMapper<PersonsDto, Persons> personMapper;
+
+    @Autowired
+    JMapper<Persons, PersonsDto> personUnMapper;
 
     @GetMapping(value = "persons")
     public List<PersonsDto> readAllpersons() {

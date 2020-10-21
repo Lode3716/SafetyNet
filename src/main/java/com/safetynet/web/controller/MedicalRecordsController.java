@@ -24,8 +24,11 @@ public class MedicalRecordsController {
     @Autowired
     RepositoryService repositorMedicalRecords;
 
-    JMapper<MedicalRecordsDTO, Medicalrecords> medicalRecordsMapper = new JMapper<>(MedicalRecordsDTO.class, Medicalrecords.class);
-    JMapper<Medicalrecords, MedicalRecordsDTO> medicalRecordsUnMapper = new JMapper<>(Medicalrecords.class, MedicalRecordsDTO.class);
+    @Autowired
+    JMapper<MedicalRecordsDTO, Medicalrecords> medicalRecordsMapper;
+
+    @Autowired
+    JMapper<Medicalrecords, MedicalRecordsDTO> medicalRecordsUnMapper;
 
     @GetMapping(value = "medicalRecord")
     public List<MedicalRecordsDTO> readAllMedicalRecords() {

@@ -7,10 +7,8 @@ import com.safetynet.model.Medicalrecords;
 import com.safetynet.model.Persons;
 import com.safetynet.utils.ParseJSON;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -27,11 +25,11 @@ import java.util.stream.Collectors;
 public class Database {
 
     @Getter
-    public static List<Persons> personsList;
+    private static List<Persons> personsList;
     @Getter
-    public static List<Medicalrecords> medicalrecordsList;
+    private static List<Medicalrecords> medicalrecordsList;
     @Getter
-    public static List<Firestations> firestationsList;
+    private static List<Firestations> firestationsList;
 
     private ParseJSON json = new ParseJSON();
     private byte[] jsonData = new byte[0];
@@ -47,6 +45,7 @@ public class Database {
         firestationsList = findAllInitFirestation();
         contrustPersonsList();
         log.info("Size medicalrecordsList : " + medicalrecordsList.size() + " / personsList : " + personsList.size() + " / firestationsList :" + firestationsList.size());
+        constructListFireStation();
 
     }
 
@@ -133,12 +132,21 @@ public class Database {
                                 if (persons.getAddress().equals(firestations.getAddress())) {
                                     persons.setFirestations(firestations);
                                 }
+
                             }
                     );
                     return true;
                 })
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    private void constructListFireStation() {
+        firestationsList.forEach(s ->
+                {
+                    s.setPersonsList(personsList);
+                }
+        );
     }
 
 }

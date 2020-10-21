@@ -24,8 +24,11 @@ public class FirestationsController {
     @Autowired
     RepositoryService repositorFirestations;
 
-    JMapper<FirestationsDTO, Firestations> firestationsMapper = new JMapper<>(FirestationsDTO.class, Firestations.class);
-    JMapper<Firestations, FirestationsDTO> firestationsUnMapper = new JMapper<>(Firestations.class, FirestationsDTO.class);
+    @Autowired
+    JMapper<FirestationsDTO, Firestations> firestationsMapper;
+
+    @Autowired
+    JMapper<Firestations, FirestationsDTO> firestationsUnMapper;
 
     @GetMapping(value = "firestation")
     public List<FirestationsDTO> readAllFirestations() {
