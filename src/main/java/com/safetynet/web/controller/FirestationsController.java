@@ -1,8 +1,13 @@
 package com.safetynet.web.controller;
 
 import com.googlecode.jmapper.JMapper;
+import com.safetynet.dto.ChildStationDTO;
 import com.safetynet.dto.FirestationsDTO;
+import com.safetynet.dto.PersonsBelongFirestationDTO;
+import com.safetynet.dto.factory.ChildStationFactory;
+import com.safetynet.dto.factory.PersonalBelongFirestationFactory;
 import com.safetynet.model.Firestations;
+import com.safetynet.model.Persons;
 import com.safetynet.repository.RepositoryService;
 import com.safetynet.web.exceptions.FirestationsIntrouvablesException;
 import lombok.extern.log4j.Log4j2;
@@ -30,7 +35,7 @@ public class FirestationsController {
     @Autowired
     JMapper<Firestations, FirestationsDTO> firestationsUnMapper;
 
-    @GetMapping(value = "firestation")
+    @GetMapping(value = "firestation/all")
     public List<FirestationsDTO> readAllFirestations() {
         List<FirestationsDTO> list = new ArrayList<>();
         repositorFirestations.getFirestationsRepository().findAll().forEach(fire ->
@@ -92,4 +97,31 @@ public class FirestationsController {
 
         return rep.get();
     }
+
+    @GetMapping(value = "firestation")
+    public PersonsBelongFirestationDTO personsBelongFireStation(@RequestParam String stationNumber){
+        log.info("personsBelongFireStation  : " + stationNumber);
+        List<Firestations> station=  repositorFirestations
+                .getFirestationsRepository()
+                .personsBelongFirestation(stationNumber);
+
+        return new PersonalBelongFirestationFactory().createPersonFirestation(station);
+
+    }
+
+    @GetMapping(value = "childAlert")
+    public ChildStationDTO childAlertStation(@RequestParam String address){
+        log.info("childAlertStation : " + address);
+        List<Persons> persons=  repositorFirestations
+                .getFirestationsRepository()
+                .childAdress(address);
+
+        ChildStationDTO childStationDTOS=new ChildStationFactory().createChildStationDTO(persons);
+
+
+        return childStationDTOS;
+
+    }
+
+
 }

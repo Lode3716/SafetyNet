@@ -2,6 +2,11 @@ package com.safetynet.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.googlecode.jmapper.annotations.JMap;
+import com.safetynet.dto.FirestationsDTO;
+import com.safetynet.dto.PersonsBelongFirestationDTO;
+import com.safetynet.dto.PersonsDto;
+import com.safetynet.dto.PersonsFirestationDTO;
 import lombok.Data;
 import lombok.ToString;
 

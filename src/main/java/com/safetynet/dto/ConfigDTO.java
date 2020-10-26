@@ -2,6 +2,7 @@ package com.safetynet.dto;
 
 import com.googlecode.jmapper.JMapper;
 import com.safetynet.model.Firestations;
+import com.safetynet.model.Individu;
 import com.safetynet.model.Medicalrecords;
 import com.safetynet.model.Persons;
 import org.springframework.context.annotation.Bean;

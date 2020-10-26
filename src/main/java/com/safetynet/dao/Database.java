@@ -142,9 +142,13 @@ public class Database {
     }
 
     private void constructListFireStation() {
-        firestationsList.forEach(s ->
+        firestationsList.forEach(station ->
                 {
-                    s.setPersonsList(personsList);
+                   List<Persons> listPers= personsList.stream()
+                            .filter(pers-> pers.getAddress().equals(station.getAddress()))
+                            .collect(Collectors.toList());
+
+                    station.setPersonsList(listPers);
                 }
         );
     }

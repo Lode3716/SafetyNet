@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 
 @Data
-@EqualsAndHashCode(of = {"firstName","lastName"})
+@EqualsAndHashCode(of = {"firstName", "lastName"})
 public class Medicalrecords {
 
     private String firstName;

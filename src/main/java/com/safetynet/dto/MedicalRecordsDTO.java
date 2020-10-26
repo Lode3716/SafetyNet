@@ -1,6 +1,7 @@
 package com.safetynet.dto;
 
 import com.googlecode.jmapper.annotations.JGlobalMap;
+import com.googlecode.jmapper.annotations.JMap;
 import lombok.Data;
 
 import java.util.List;

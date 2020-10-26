@@ -1,6 +1,5 @@
 package com.safetynet.model;
 
-import com.googlecode.jmapper.annotations.JMap;
 import lombok.Data;
 import lombok.ToString;
 
