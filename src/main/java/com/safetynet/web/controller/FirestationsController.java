@@ -1,11 +1,11 @@
 package com.safetynet.web.controller;
 
 import com.googlecode.jmapper.JMapper;
-import com.safetynet.dto.ChildStationDTO;
-import com.safetynet.dto.FirestationsDTO;
-import com.safetynet.dto.PersonsBelongFirestationDTO;
+import com.safetynet.dto.*;
 import com.safetynet.dto.factory.ChildStationFactory;
 import com.safetynet.dto.factory.PersonalBelongFirestationFactory;
+import com.safetynet.dto.factory.PersoneMedicalsFactory;
+import com.safetynet.dto.factory.PersonsPhoneFactory;
 import com.safetynet.model.Firestations;
 import com.safetynet.model.Persons;
 import com.safetynet.repository.RepositoryService;
@@ -19,7 +19,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Log4j2
@@ -99,9 +101,9 @@ public class FirestationsController {
     }
 
     @GetMapping(value = "firestation")
-    public PersonsBelongFirestationDTO personsBelongFireStation(@RequestParam String stationNumber){
+    public PersonsBelongFirestationDTO personsBelongFireStation(@RequestParam String stationNumber) {
         log.info("personsBelongFireStation  : " + stationNumber);
-        List<Firestations> station=  repositorFirestations
+        List<Firestations> station = repositorFirestations
                 .getFirestationsRepository()
                 .personsBelongFirestation(stationNumber);
 
@@ -109,18 +111,54 @@ public class FirestationsController {
 
     }
 
-    @GetMapping(value = "childAlert")
-    public ChildStationDTO childAlertStation(@RequestParam String address){
-        log.info("childAlertStation : " + address);
-        List<Persons> persons=  repositorFirestations
+    @GetMapping(value = "phoneAlert")
+    public List<PersonsPhoneDTO> phoneAlerte(@RequestParam String firestation_number) {
+        log.info("phoneAlerte  : " + firestation_number);
+        List<Firestations> station = repositorFirestations
                 .getFirestationsRepository()
-                .childAdress(address);
+                .personsBelongFirestation(firestation_number);
+        return new PersonsPhoneFactory().createPersonsPhone(station);
 
-        ChildStationDTO childStationDTOS=new ChildStationFactory().createChildStationDTO(persons);
+    }
 
+    @GetMapping(value = "childAlert")
+    public ChildStationDTO childAlertStation(@RequestParam String address) {
+        log.info("childAlertStation : " + address);
+        List<Persons> persons = repositorFirestations
+                .getFirestationsRepository()
+                .personsAdress(address);
+        return new ChildStationFactory().createChildStationDTO(persons);
 
-        return childStationDTOS;
+    }
 
+    @GetMapping(value = "fire")
+    public List<PersonsMedicalsDTO> fireAdress(@RequestParam String address) {
+        log.info("fireAdress : " + address);
+        List<Persons> persons = repositorFirestations
+                .getFirestationsRepository()
+                .personsAdress(address);
+        return new PersoneMedicalsFactory().createPersonsMedicals(persons);
+
+    }
+
+    @GetMapping(value = "flood/")
+    public Map<String, List<PersonsMedicalsDTO>> floodStation(@RequestParam List<String> stations) {
+        log.info("floodStation : " + stations);
+        Map<String, List<PersonsMedicalsDTO>> retour = new HashMap<>();
+        stations.forEach(stat ->
+        {
+            log.info(stat);
+            repositorFirestations
+                    .getFirestationsRepository()
+                    .personsBelongFirestation(stat)
+                    .forEach(pers ->
+            {
+                    List<PersonsMedicalsDTO> personeMedicalsList = new PersoneMedicalsFactory().createPersonsMedicals(pers.getPersonsList());
+                    retour.put(pers.getAddress(), personeMedicalsList);
+
+            });
+        });
+        return retour;
     }
 
 

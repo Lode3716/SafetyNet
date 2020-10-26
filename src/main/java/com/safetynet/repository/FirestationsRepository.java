@@ -91,7 +91,7 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
                 .collect(Collectors.toList());
 
     }
-    public List<Persons> childAdress(String station) {
+    public List<Persons> personsAdress(String station) {
         return database.getFirestationsList()
                 .stream()
                 .filter(stattion -> station.equals(stattion.getAddress()))

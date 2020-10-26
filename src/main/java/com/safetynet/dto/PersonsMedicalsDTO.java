@@ -1,17 +1,16 @@
 package com.safetynet.dto;
 
-import com.googlecode.jmapper.annotations.JGlobalMap;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-@JGlobalMap
-public class MedicalRecordsDTO {
+public class PersonsMedicalsDTO {
 
-    private String firstName;
+    private String Station;
     private String lastName;
-    private String birthdate;
+    private String phone;
+    private Integer age;
     private List<String> medications;
     private List<String> allergies;
 }

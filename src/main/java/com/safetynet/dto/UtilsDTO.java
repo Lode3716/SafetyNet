@@ -12,7 +12,6 @@ import java.util.Optional;
 public class UtilsDTO {
 
     private static DateTimeFormatter format = DateTimeFormatter.ofPattern("d/MM/yyyy");
-    private static DateTimeFormatter formatYear = DateTimeFormatter.ofPattern("yyyy");
 
     public Optional<Integer> calculAge(String birthday) {
         try {
@@ -20,8 +19,8 @@ public class UtilsDTO {
                     .getYears());
 
         } catch (DateTimeException ex) {
-            log.error("La date pour le calcul de l'age est invalide, elle sera générée sur la base de l'année . / error :" + ex.getMessage());
-            return genereDate(birthday);
+            log.error("La date pour le calcul de l'age est invalide. / error :" + ex.getMessage());
+            return Optional.empty();
         }
     }
 
@@ -34,11 +33,6 @@ public class UtilsDTO {
         return Optional.empty();
     }
 
-    private Optional<Integer> genereDate(String birthday)
-    {
-        Integer retour=LocalDate.now().getYear()-LocalDate.parse(birthday, formatYear).getYear();
-       return Optional.of(retour);
-    }
 }
 
 

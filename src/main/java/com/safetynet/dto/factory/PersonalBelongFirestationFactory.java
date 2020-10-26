@@ -4,13 +4,12 @@ import com.safetynet.dto.PersonsBelongFirestationDTO;
 import com.safetynet.dto.PersonsFirestationDTO;
 import com.safetynet.dto.UtilsDTO;
 import com.safetynet.model.Firestations;
-import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Log4j2
+
 public class PersonalBelongFirestationFactory {
 
     public PersonsBelongFirestationDTO createPersonFirestation(List<Firestations> firestations) {
