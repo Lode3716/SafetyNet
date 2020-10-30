@@ -16,7 +16,6 @@ public class MedicalRecordsRepository implements BuisnessRepo<Medicalrecords> {
     @Autowired
     Database database;
 
-
     @Override
     public List<Medicalrecords> findAll() {
         return database.getMedicalrecordsList();
@@ -45,7 +44,6 @@ public class MedicalRecordsRepository implements BuisnessRepo<Medicalrecords> {
                 .stream()
                 .anyMatch(search -> medicalrecords.getLastName().equals(search.getLastName()) && medicalrecords.getFirstName().equals(search.getFirstName()));
     }
-
 
     @Override
     public Optional<Medicalrecords> update(Medicalrecords medicalrecords) {

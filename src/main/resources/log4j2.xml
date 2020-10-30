@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO" monitorInterval="30">
+
+    <Properties >
+        <Property name="LOG_PATTERN">%d{HH:mm:sss}|%5p|%c{1} -> %msg%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <Patternlayout pattern="${LOG_PATTERN}" />
+            <LevelRangeFilter minLevel="INFO" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY" />
+        </Console>
+
+        <RollingFile name="debug" fileName="log/debug.log" filePattern="debug-%d{dd-MM-yyyy}-%i.log">
+            <LevelRangeFilter minLevel="INFO" maxLevel="WARN" onMatch="ACCEPT" onMismatch="DENY" />
+
+            <PatternLayout pattern="${LOG_PATTERN}" />
+
+            <Policies>
+                <SizeBasedTriggeringPolicy size="19500KB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+
+        </RollingFile>
+
+        <RollingFile name="error" fileName="log/error.log" filePattern="error-%d{dd-MM-yyyy}-%i.log">
+            <LevelRangeFilter minLevel="FATAL" maxLevel="WARN" onMatch="ACCEPT" onMismatch="DENY" />
+
+            <PatternLayout pattern="${LOG_PATTERN}" />
+
+            <Policies>
+                <SizeBasedTriggeringPolicy size="19500KB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+
+        </RollingFile>
+
+    </Appenders>
+
+
+    <Loggers>
+        <Logger name="com.safetynet" additivity="false">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="debug" />
+            <AppenderRef ref="error" />
+        </Logger>
+
+        <Root level="all" />
+    </Loggers>
+
+</Configuration>
