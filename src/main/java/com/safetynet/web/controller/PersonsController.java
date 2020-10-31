@@ -2,6 +2,8 @@ package com.safetynet.web.controller;
 
 import com.googlecode.jmapper.JMapper;
 import com.safetynet.dto.PersonsDto;
+import com.safetynet.dto.PersonsMedicationAdresseDTO;
+import com.safetynet.dto.factory.ServiceFactory;
 import com.safetynet.model.Persons;
 import com.safetynet.repository.RepositoryService;
 import com.safetynet.web.exceptions.PersonsIntrouvableException;
@@ -30,6 +32,9 @@ public class PersonsController {
     @Autowired
     JMapper<Persons, PersonsDto> personUnMapper;
 
+    @Autowired
+    ServiceFactory serviceFactory;
+
     @GetMapping(value = "persons")
     public List<PersonsDto> readAllpersons() {
 
@@ -44,14 +49,14 @@ public class PersonsController {
 
     @GetMapping(value = "person/{nom}/{prenom}")
     public Persons readPerson(@PathVariable("nom") String nom, @PathVariable("prenom") String prenom) {
-        log.info("Entre dans dinbyElements " + nom + " " + prenom);
+        log.info("Entre dans read Person by Elements " + nom + " " + prenom);
         return repositorPersons.getPersonsRepository().finByElements(nom, prenom)
                 .orElseThrow(() -> new PersonsIntrouvableException("La personne se nommant " + nom + " " + prenom + "est introuvable."));
     }
 
     @PostMapping(value = "person")
     public ResponseEntity<Void> addPersons(@RequestBody PersonsDto persons) {
-        log.info("Passe add person : " + persons);
+        log.info("Add person : " + persons);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
 
         repositorPersons.getPersonsRepository().add(personUnMapper.getDestination(persons))
@@ -100,4 +105,20 @@ public class PersonsController {
         return rep.get();
     }
 
+
+    @GetMapping(value = "personInfo")
+    public List<PersonsMedicationAdresseDTO> personInfo(@RequestParam String firstName, @RequestParam String lastName) {
+        log.info("Entre dans personInfo : " + firstName + " " + lastName);
+        List<PersonsMedicationAdresseDTO> dtoList = new ArrayList<>();
+        repositorPersons.getPersonsRepository().searchAllName(lastName, firstName)
+                .ifPresent(lst ->
+                {
+                    lst.forEach(persons ->
+                    {
+                        dtoList.add(serviceFactory.getPersonsMedicationAdresseFactory().createPersonMedical(persons));
+                    });
+                });
+
+        return dtoList;
+    }
 }

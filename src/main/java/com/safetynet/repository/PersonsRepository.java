@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -77,7 +78,6 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     }
 
     public Optional<Persons> finByElements(String nom, String prenom) {
-        log.info("finby elements : " + nom + " / " + prenom);
         AtomicReference<Persons> atomicPers = new AtomicReference<>();
         database.getPersonsList().stream()
                 .filter(search -> nom.equals(search.getLastName()) && prenom.equals(search.getFirstName()))
@@ -92,6 +92,27 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
         return Optional.of(atomicPers.get());
     }
 
+    public Optional<List<Persons>> searchAllName(String nom, String prenom)
+    {
+     List<Persons> personsList= new ArrayList<>();
+        finByElements(nom,prenom)
+                .ifPresent(persons ->
+                        {
+                            database.getPersonsList()
+                                    .stream()
+                                    .filter(search -> persons.getLastName().equals(search.getLastName()))
+                                    .forEach(searchPers ->
+                                    {
+                                        personsList.add(searchPers);
+                                    });
+                        });
+
+        if (personsList.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(personsList);
+    }
+
 
     private Persons contrustPersons(Persons persons) {
 
@@ -102,16 +123,21 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
                 persons.setMedicalrecords(medicalrecords);
             }
         });
+
         List<Firestations> listFires=new ArrayList<>();
+
         database.getFirestationsList()
                 .forEach(firestations ->
                         {
+                            log.info("Numero de station : "+firestations.getStation());
                             if (persons.getAddress().equals(firestations.getAddress())) {
+                                log.info("Associe personne : "+ persons.getFirstName() +" "+persons.getLastName()+" / adress pers :"+persons.getAddress()+ " / "+firestations.getAddress());
                                 listFires.add(firestations);
                             }
                         }
                 );
         persons.setFirestations(listFires);
+
         log.debug("PersonRepository : Construit les associations Persons: " + persons);
         return persons;
 

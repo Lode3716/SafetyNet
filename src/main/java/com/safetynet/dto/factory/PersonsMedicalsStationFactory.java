@@ -13,9 +13,7 @@ import java.util.Optional;
 public class PersonsMedicalsStationFactory {
 
     public List<PersonsMedicalStationDTO> createPersonsMedicals(List<Persons> personsLive) {
-
         List<PersonsMedicalStationDTO> personsMedicalsList = new ArrayList<>();
-
         personsLive
                 .forEach(persons ->
                 {
@@ -45,31 +43,4 @@ public class PersonsMedicalsStationFactory {
         return personsMedicalStationDTO;
 
     }
-
-/*
-    public List<PersonsMedicalsDTO> createPersonsMedicals(List<Persons> personsLive, String station) {
-
-        List<PersonsMedicalsDTO> personsMedicalsList = new ArrayList<>();
-
-        UtilsDTO utilsDTO = new UtilsDTO();
-
-        personsLive
-                .forEach(persons ->
-                {
-                    log.info(persons.getFirestations().getAddress() + " / "+persons.getFirestations().getStation());
-                    if(persons.getFirestations().getStation().equals(station)) {
-                        log.info("Passe : "+persons.getFirestations().getStation());
-                        PersonsMedicalsDTO personsMedicalsDTO = new PersonsMedicalsDTO();
-                        personsMedicalsDTO.setStation(persons.getFirestations().getStation());
-                        personsMedicalsDTO.setLastName(persons.getLastName());
-                        personsMedicalsDTO.setPhone(persons.getPhone());
-                        personsMedicalsDTO.setAllergies(persons.getMedicalrecords().getAllergies());
-                        personsMedicalsDTO.setMedications(persons.getMedicalrecords().getMedications());
-                        utilsDTO.calculAge(persons.getMedicalrecords().getBirthdate())
-                                .ifPresentOrElse(age -> personsMedicalsDTO.setAge(age), () -> personsMedicalsDTO.setAge(0));
-                        personsMedicalsList.add(personsMedicalsDTO);
-                    }
-                });
-        return personsMedicalsList;
-    }*/
 }

@@ -95,7 +95,7 @@ public class Database {
         } catch (IOException e) {
             log.error("Une erreur c'est produite lors de la creation de la dataBase Firestation : "+e.getMessage());
         }
-        log.info("Initialisation de la liste Firestation de la Database : "+firestationsList.size());
+        log.debug("Initialisation de la liste Firestation de la Database : "+firestationsList.size());
         return firestationsList;
     }
 
@@ -124,7 +124,7 @@ public class Database {
         } catch (IOException e) {
             log.error("Initialisation de la liste Medicalrecords de la Database : "+e.getMessage());
         }
-        log.info("Initialisation de la liste Medicalrecords de la Database : "+medicalrecordsList.size());
+        log.debug("Initialisation de la liste Medicalrecords de la Database : "+medicalrecordsList.size());
         return medicalrecordsList;
     }
 

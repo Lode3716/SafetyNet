@@ -5,12 +5,12 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class PersonsMedicalStationDTO {
+public class PersonsMedicationAdresseDTO {
 
-    private String station;
     private String lastName;
-    private String phone;
+    private String adress;
     private Integer age;
+    private String email;
     private List<String> medications;
     private List<String> allergies;
 }

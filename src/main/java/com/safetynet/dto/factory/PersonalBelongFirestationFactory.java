@@ -4,6 +4,7 @@ import com.safetynet.dto.PersonsBelongFirestationDTO;
 import com.safetynet.dto.PersonsFirestationDTO;
 import com.safetynet.dto.UtilsDTO;
 import com.safetynet.model.Firestations;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class PersonalBelongFirestationFactory {
+
+    @Autowired
+    ServiceFactory serviceFactory;
 
     public PersonsBelongFirestationDTO createPersonFirestation(List<Firestations> firestations) {
 
@@ -22,16 +26,11 @@ public class PersonalBelongFirestationFactory {
         AtomicInteger adult = new AtomicInteger();
         AtomicInteger child = new AtomicInteger();
 
-        firestations
-                .stream()
-                .forEach(station ->
+        firestations.forEach(station ->
                 {
-
-                    station.getPersonsList()
-                            .forEach(persons ->
+                    station.getPersonsList().forEach(persons ->
                             {
-                                PersonsFirestationFactory create = new PersonsFirestationFactory();
-                                personsFirestationDTO.add(create.creatPersonsFirestation(persons.getFirstName(), persons.getLastName(), persons.getAddress()));
+                                personsFirestationDTO.add(serviceFactory.getPersonsFirestationFactory().creatPersonsFirestation(persons.getFirstName(), persons.getLastName(), persons.getAddress()));
 
                                 utilsDTO.calculAge(persons.getMedicalrecords().getBirthdate())
                                         .ifPresent(age ->

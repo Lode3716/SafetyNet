@@ -1,14 +1,12 @@
 package com.safetynet.repository;
 
 import com.safetynet.dao.Database;
-import com.safetynet.dto.ChildStationDTO;
 import com.safetynet.model.Firestations;
 import com.safetynet.model.Persons;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -91,6 +89,7 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
                 .collect(Collectors.toList());
 
     }
+
     public List<Persons> personsAdress(String station) {
         return database.getFirestationsList()
                 .stream()

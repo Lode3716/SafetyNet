@@ -49,4 +49,10 @@ public class ServiceFactoryImpl implements ServiceFactory {
     public PersonsPhoneFactory getPersonsPhoneFactory() {
         return new PersonsPhoneFactory();
     }
+
+    @Bean
+    @Override
+    public PersonsMedicationAdresseFactory getPersonsMedicationAdresseFactory() {
+        return new PersonsMedicationAdresseFactory();
+    }
 }

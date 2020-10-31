@@ -5,12 +5,16 @@ import com.safetynet.dto.PersonsShortDTO;
 import com.safetynet.dto.UtilsDTO;
 import com.safetynet.model.Persons;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
 public class ChildStationFactory {
+
+    @Autowired
+    ServiceFactory serviceFactory;
 
     public ChildStationDTO createChildStationDTO(List<Persons> personsLive) {
         ChildStationDTO child = new ChildStationDTO();
@@ -23,7 +27,7 @@ public class ChildStationFactory {
                     utilsDTO.calculAge(persons.getMedicalrecords().getBirthdate())
                             .ifPresent(age->
                             {
-                                PersonsShortDTO shortPerson = new PersonShortFactory().createPersonsShort(persons.getFirstName(), persons.getLastName(),age);
+                                PersonsShortDTO shortPerson = serviceFactory.getPersonShortFactory().createPersonsShort(persons.getFirstName(), persons.getLastName(),age);
 
                                 utilsDTO.adultOrNot(persons.getMedicalrecords().getBirthdate())
                                         .ifPresent(util ->
