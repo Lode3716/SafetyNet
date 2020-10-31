@@ -2,15 +2,11 @@ package com.safetynet.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import com.googlecode.jmapper.annotations.JMap;
-import com.safetynet.dto.FirestationsDTO;
-import com.safetynet.dto.PersonsBelongFirestationDTO;
-import com.safetynet.dto.PersonsDto;
-import com.safetynet.dto.PersonsFirestationDTO;
 import lombok.Data;
 import lombok.ToString;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @ToString(callSuper = true)
@@ -23,7 +19,7 @@ public class Persons extends Individu implements Serializable {
     private String phone;
     private String email;
     @JsonIgnore
-    private Firestations firestations;
+    private List<Firestations> firestations;
     @JsonIgnore
     private Medicalrecords medicalrecords;
 
