@@ -2,10 +2,7 @@ package com.safetynet.web.controller;
 
 import com.googlecode.jmapper.JMapper;
 import com.safetynet.dto.*;
-import com.safetynet.dto.factory.ChildStationFactory;
-import com.safetynet.dto.factory.PersonalBelongFirestationFactory;
-import com.safetynet.dto.factory.PersoneMedicalsFactory;
-import com.safetynet.dto.factory.PersonsPhoneFactory;
+import com.safetynet.dto.factory.*;
 import com.safetynet.model.Firestations;
 import com.safetynet.model.Persons;
 import com.safetynet.repository.RepositoryService;
@@ -30,6 +27,9 @@ public class FirestationsController {
 
     @Autowired
     RepositoryService repositorFirestations;
+
+    @Autowired
+    ServiceFactory serviceFactory;
 
     @Autowired
     JMapper<FirestationsDTO, Firestations> firestationsMapper;
@@ -132,12 +132,12 @@ public class FirestationsController {
     }
 
     @GetMapping(value = "fire")
-    public List<PersonsMedicalsDTO> fireAdress(@RequestParam String address) {
+    public List<PersonsMedicalStationDTO> fireAdress(@RequestParam String address) {
         log.info("fireAdress : " + address);
         List<Persons> persons = repositorFirestations
                 .getFirestationsRepository()
                 .personsAdress(address);
-        return new PersoneMedicalsFactory().createPersonsMedicals(persons);
+        return new PersonsMedicalsStationFactory().createPersonsMedicals(persons);
 
     }
 
@@ -153,8 +153,13 @@ public class FirestationsController {
                     .personsBelongFirestation(stat)
                     .forEach(pers ->
             {
-                    List<PersonsMedicalsDTO> personeMedicalsList = new PersoneMedicalsFactory().createPersonsMedicals(pers.getPersonsList());
-                    retour.put(pers.getAddress(), personeMedicalsList);
+                    List<PersonsMedicalsDTO> personeMedicalsList = serviceFactory.getPersonsMedicalsFactory().createPersonsMedicals(pers.getPersonsList(),stat);
+                    StringBuilder sb=new StringBuilder();
+                    sb.append("Station ")
+                            .append(stat)
+                            .append(" / ")
+                            .append(pers.getAddress());
+                    retour.put(sb.toString(), personeMedicalsList);
 
             });
         });

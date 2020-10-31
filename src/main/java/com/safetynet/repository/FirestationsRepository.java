@@ -96,9 +96,8 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
                 .stream()
                 .filter(stattion -> station.equals(stattion.getAddress()))
                 .map(Firestations::getPersonsList)
-                .findAny()
+                .findFirst()
                 .get();
-
     }
 
 }
