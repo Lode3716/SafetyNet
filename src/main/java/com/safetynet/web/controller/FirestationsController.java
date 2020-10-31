@@ -107,7 +107,7 @@ public class FirestationsController {
                 .getFirestationsRepository()
                 .personsBelongFirestation(stationNumber);
 
-        return new PersonalBelongFirestationFactory().createPersonFirestation(station);
+        return serviceFactory.getPersonalBelongFirestationFactory().createPersonFirestation(station);
 
     }
 
@@ -117,7 +117,7 @@ public class FirestationsController {
         List<Firestations> station = repositorFirestations
                 .getFirestationsRepository()
                 .personsBelongFirestation(firestation_number);
-        return new PersonsPhoneFactory().createPersonsPhone(station);
+        return serviceFactory.getPersonsPhoneFactory().createPersonsPhone(station);
 
     }
 
@@ -127,7 +127,7 @@ public class FirestationsController {
         List<Persons> persons = repositorFirestations
                 .getFirestationsRepository()
                 .personsAdress(address);
-        return new ChildStationFactory().createChildStationDTO(persons);
+        return serviceFactory.getChildStationFactory().createChildStationDTO(persons);
 
     }
 
@@ -137,7 +137,7 @@ public class FirestationsController {
         List<Persons> persons = repositorFirestations
                 .getFirestationsRepository()
                 .personsAdress(address);
-        return new PersonsMedicalsStationFactory().createPersonsMedicals(persons);
+        return serviceFactory.getPersonsMedicalsStationFactory().createPersonsMedicals(persons);
 
     }
 

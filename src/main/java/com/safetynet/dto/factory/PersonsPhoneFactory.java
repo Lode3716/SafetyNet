@@ -20,12 +20,20 @@ public class PersonsPhoneFactory {
                     station.getPersonsList()
                             .forEach(persons ->
                             {
-                                PersonsPhoneDTO personsPhoneDTO = new PersonsPhoneDTO();
-                                personsPhoneDTO.setPhone(persons.getPhone());
-                                personsPhoneList.add(personsPhoneDTO);
+                                if(!phoneExist(personsPhoneList, persons.getPhone())) {
+                                    PersonsPhoneDTO personsPhoneDTO = new PersonsPhoneDTO();
+                                    personsPhoneDTO.setPhone(persons.getPhone());
+                                    personsPhoneList.add(personsPhoneDTO);
+                                }
                             });
 
                 });
         return personsPhoneList;
+    }
+
+    private boolean phoneExist(List<PersonsPhoneDTO> personsPhoneList,String phone)
+    {
+        return personsPhoneList.stream()
+                .anyMatch(search -> phone.equals(search.getPhone()));
     }
 }

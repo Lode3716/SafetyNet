@@ -12,9 +12,6 @@ import java.util.Optional;
 @Log4j2
 public class PersonsMedicalsFactory {
 
-    public PersonsMedicalsFactory() {
-    }
-
     public List<PersonsMedicalsDTO> createPersonsMedicals(List<Persons> personsLive, String nmrStation) {
 
         List<PersonsMedicalsDTO> personsMedicalsList = new ArrayList<>();
