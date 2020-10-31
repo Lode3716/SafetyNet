@@ -11,7 +11,7 @@ import java.util.Optional;
 @Log4j2
 public class UtilsDTO {
 
-    private static DateTimeFormatter format = DateTimeFormatter.ofPattern("d/MM/yyyy");
+    private static DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
     public Optional<Integer> calculAge(String birthday) {
         try {
