@@ -29,7 +29,6 @@ public class PersonsMedicalsFactory {
                                         .filter(nmr -> nmrStation.equals(nmr.getStation()))
                                         .forEach(stat ->
                                         {
-                                            log.info("Passe " + persons.getFirstName() + " / " + stat.getStation());
                                             personsMedicalsList.add(createPersonMedical(persons));
                                         });
                             }, () -> personsMedicalsList.add(createPersonMedical(persons)));
