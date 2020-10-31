@@ -44,9 +44,9 @@ public class Database {
         medicalrecordsList = findAllInitMedicalrecords();
         firestationsList = findAllInitFirestation();
         contrustPersonsList();
-        log.info("Size medicalrecordsList : " + medicalrecordsList.size() + " / personsList : " + personsList.size() + " / firestationsList :" + firestationsList.size());
+        log.debug("Creation des associations Personns.");
         constructListFireStation();
-
+        log.debug("Creation des associations Firestations.");
     }
 
 
@@ -64,12 +64,13 @@ public class Database {
                             persons2.add(persons);
 
                         } catch (JsonProcessingException e) {
-                            e.printStackTrace();
+                            log.error("Une erreur c'est produite lors de la lecture du JSON Personn : "+e.getMessage());
                         }
                     });
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Une erreur c'est produite lors de la creation de la dataBase Personn : "+e.getMessage());
         }
+        log.info("Initialisation de la liste Personn de la Database : "+persons2.size());
         return persons2;
     }
 
@@ -83,16 +84,25 @@ public class Database {
                         try {
                             ObjectMapper objectMapper = new ObjectMapper();
                             Firestations firestations = objectMapper.treeToValue(s, Firestations.class);
-                            firestationsList.add(firestations);
+                            if(!firestationExist(firestationsList,firestations)) {
+                                firestationsList.add(firestations);
+                            }
                         } catch (JsonProcessingException e) {
-                            e.printStackTrace();
+                            log.error("Une erreur c'est produite lors de la lecture du JSON Firestation : "+e.getMessage());
                         }
                     });
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Une erreur c'est produite lors de la creation de la dataBase Firestation : "+e.getMessage());
         }
+        log.info("Initialisation de la liste Firestation de la Database : "+firestationsList.size());
         return firestationsList;
+    }
+
+    private boolean firestationExist(List<Firestations> list,Firestations firestation)
+    {
+        return list.stream()
+                .anyMatch(search -> firestation.getAddress().equals(search.getAddress()) && firestation.getStation().equals(search.getStation()));
     }
 
     public List<Medicalrecords> findAllInitMedicalrecords() {
@@ -108,37 +118,42 @@ public class Database {
                             Medicalrecords medicalrecords = objectMapper.treeToValue(s, Medicalrecords.class);
                             medicalrecordsList.add(medicalrecords);
                         } catch (JsonProcessingException e) {
-                            e.printStackTrace();
+                            log.error("Une erreur c'est produite lors de la lecture du JSON Medicalrecords : "+e.getMessage());
                         }
                     });
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Initialisation de la liste Medicalrecords de la Database : "+e.getMessage());
         }
+        log.info("Initialisation de la liste Medicalrecords de la Database : "+medicalrecordsList.size());
         return medicalrecordsList;
     }
 
-    private List<Persons> contrustPersonsList() {
-        return personsList.stream()
-                .parallel()
-                .filter(persons -> {
+    private void contrustPersonsList() {
+        personsList
+                .stream()
+                .filter(persons ->
+                {
                     medicalrecordsList.forEach(medicalrecords ->
                     {
                         if (persons.getFirstName().equals(medicalrecords.getFirstName()) && persons.getLastName().equals(medicalrecords.getLastName())) {
                             persons.setMedicalrecords(medicalrecords);
                         }
                     });
-                    firestationsList.forEach(firestations ->
+                    List<Firestations> listFires=new ArrayList<>();
+                    firestationsList
+                            .forEach(firestations ->
                             {
-                                if (persons.getAddress().equals(firestations.getAddress())) {
-                                    persons.setFirestations(firestations);
+                                if (persons.getAddress().equals(firestations.getAddress()))
+                                {
+                                    listFires.add(firestations);
                                 }
-
                             }
                     );
+                    persons.setFirestations(listFires);
                     return true;
                 })
-                .distinct()
-                .collect(Collectors.toList());
+        .distinct()
+        .collect(Collectors.toList());
     }
 
     private void constructListFireStation() {
