@@ -2,6 +2,7 @@ package com.safetynet.web.controller;
 
 import com.googlecode.jmapper.JMapper;
 import com.safetynet.dto.PersonsDto;
+import com.safetynet.dto.PersonsEmailDTO;
 import com.safetynet.dto.PersonsMedicationAdresseDTO;
 import com.safetynet.dto.factory.ServiceFactory;
 import com.safetynet.model.Persons;
@@ -118,7 +119,28 @@ public class PersonsController {
                         dtoList.add(serviceFactory.getPersonsMedicationAdresseFactory().createPersonMedical(persons));
                     });
                 });
+        if (dtoList.isEmpty()) {
+            throw new PersonsIntrouvableException("La personne se nommant " + firstName + " " + firstName + "est introuvable.");
+        }
 
         return dtoList;
+    }
+
+    @GetMapping(value = "communityEmail")
+    public List<PersonsEmailDTO> personsEmail(@RequestParam String city) {
+        log.info("Entre dans communityEmail : " + city);
+
+        List<PersonsEmailDTO> dtoList = new ArrayList<>();
+        repositorPersons.getPersonsRepository()
+                .searchEmailCity(city)
+                .ifPresent(lst ->
+                        lst.forEach(mail ->
+                                dtoList.add(serviceFactory.getPersonEmailFactory().create(mail))));
+        if (dtoList.isEmpty()) {
+            throw new PersonsIntrouvableException("La ville "+ city + "ne dispose pas d'email de la population. ");
+        }
+
+        return dtoList;
+
     }
 }

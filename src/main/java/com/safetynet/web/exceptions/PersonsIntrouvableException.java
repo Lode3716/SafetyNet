@@ -6,7 +6,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class PersonsIntrouvableException extends RuntimeException {
 
-    public PersonsIntrouvableException(String s) {
-        super(s);
+    public PersonsIntrouvableException() {
+    }
+
+    public PersonsIntrouvableException(String message) {
+        super(message);
     }
 }

@@ -7,45 +7,62 @@
 
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT" follow="true">
-            <Patternlayout pattern="${LOG_PATTERN}" />
-            <LevelRangeFilter minLevel="INFO" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
 
-        <RollingFile name="debug" fileName="log/debug.log" filePattern="debug-%d{dd-MM-yyyy}-%i.log">
-            <LevelRangeFilter minLevel="INFO" maxLevel="WARN" onMatch="ACCEPT" onMismatch="DENY" />
+        <RollingFile name="debugLog" fileName="debug.log"
+                     filePattern="debug-%d{dd-MM-yyyy}-%i.log">
 
-            <PatternLayout pattern="${LOG_PATTERN}" />
+            <!-- Matches only DEBUG level -->
+            <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
 
+            <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="19500KB"/>
+                <SizeBasedTriggeringPolicy size="19500KB" />
             </Policies>
             <DefaultRolloverStrategy max="10"/>
-
         </RollingFile>
 
-        <RollingFile name="error" fileName="log/error.log" filePattern="error-%d{dd-MM-yyyy}-%i.log">
-            <LevelRangeFilter minLevel="FATAL" maxLevel="WARN" onMatch="ACCEPT" onMismatch="DENY" />
+        <RollingFile name="infoLog" fileName="info.log"
+                     filePattern="debug-%d{dd-MM-yyyy}-%i.log" >
 
-            <PatternLayout pattern="${LOG_PATTERN}" />
+            <!-- Matches only INFO level -->
+            <LevelRangeFilter minLevel="INFO" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
 
+            <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
-                <SizeBasedTriggeringPolicy size="19500KB"/>
+                <SizeBasedTriggeringPolicy size="19500KB" />
             </Policies>
             <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
 
+        <RollingFile name="errorLog" fileName="error.log"
+                     filePattern="debug-%d{dd-MM-yyyy}-%i.log">
+
+            <!-- Matches only ERROR level -->
+            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="19500KB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
         </RollingFile>
 
     </Appenders>
 
-
     <Loggers>
-        <Logger name="com.safetynet" additivity="false">
-            <AppenderRef ref="Console" />
-            <AppenderRef ref="debug" />
-            <AppenderRef ref="error" />
+
+        <Logger name="com.howtodoinjava.app" additivity="false">
+            <AppenderRef ref="debugLog" />
+            <AppenderRef ref="infoLog"  />
+            <AppenderRef ref="errorLog" />
+            <AppenderRef ref="Console"  />
         </Logger>
 
-        <Root level="all" />
-    </Loggers>
+        <Root level="all">
+            <AppenderRef ref="Console"/>
+        </Root>
 
+    </Loggers>
 </Configuration>

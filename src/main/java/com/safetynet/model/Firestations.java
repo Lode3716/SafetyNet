@@ -58,4 +58,13 @@ public class Firestations implements Serializable {
     public int hashCode() {
         return Objects.hash(getStation(), getAddress());
     }
+
+    @Override
+    public String toString() {
+        return "Firestations{" +
+                "station='" + station + '\'' +
+                ", address='" + address + '\'' +
+                ", personsList=" + personsList +
+                '}';
+    }
 }

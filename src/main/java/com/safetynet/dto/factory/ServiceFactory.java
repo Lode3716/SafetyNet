@@ -17,4 +17,6 @@ public interface ServiceFactory {
     PersonsPhoneFactory getPersonsPhoneFactory();
 
     PersonsMedicationAdresseFactory getPersonsMedicationAdresseFactory();
+
+    PersonEmailFactory getPersonEmailFactory();
 }

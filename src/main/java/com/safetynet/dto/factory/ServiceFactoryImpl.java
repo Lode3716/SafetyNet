@@ -55,4 +55,10 @@ public class ServiceFactoryImpl implements ServiceFactory {
     public PersonsMedicationAdresseFactory getPersonsMedicationAdresseFactory() {
         return new PersonsMedicationAdresseFactory();
     }
+
+    @Bean
+    @Override
+    public PersonEmailFactory getPersonEmailFactory() {
+        return  new PersonEmailFactory();
+    }
 }
