@@ -6,6 +6,7 @@ import com.safetynet.dto.factory.*;
 import com.safetynet.model.Firestations;
 import com.safetynet.model.Persons;
 import com.safetynet.repository.RepositoryService;
+import com.safetynet.service.FirestationService;
 import com.safetynet.web.exceptions.FirestationsIntrouvablesException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,16 +38,12 @@ public class FirestationsController {
     @Autowired
     JMapper<Firestations, FirestationsDTO> firestationsUnMapper;
 
+    @Autowired
+    FirestationService firestationService;
+
     @GetMapping(value = "firestation/all")
     public List<FirestationsDTO> readAllFirestations() {
-        List<FirestationsDTO> list = new ArrayList<>();
-        repositorFirestations.getFirestationsRepository().findAll().forEach(fire ->
-                {
-                    list.add(firestationsMapper.getDestination(fire));
-                }
-        );
-
-        return list;
+        return firestationService.findAll();
     }
 
     @PostMapping(value = "firestation")
@@ -54,8 +51,7 @@ public class FirestationsController {
         log.info("Passe add firestation : " + firestation);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
 
-        repositorFirestations.getFirestationsRepository()
-                .add(firestationsUnMapper.getDestination(firestation))
+        firestationService.add(firestation)
                 .ifPresentOrElse(retour ->
                 {
                     URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{station}/{adress}")
@@ -73,7 +69,7 @@ public class FirestationsController {
     @DeleteMapping(value = "firestation")
     public ResponseEntity<Void> deleteFirestation(@RequestBody FirestationsDTO oldFirestation) {
         log.info("Passe firestation : " + oldFirestation);
-        Boolean retour = repositorFirestations.getFirestationsRepository().delete(firestationsUnMapper.getDestination(oldFirestation));
+        Boolean retour = firestationService.delete(oldFirestation);
         if (!retour) {
             throw new FirestationsIntrouvablesException("La station se nommant " + oldFirestation.getStation() + "est introuvable.");
         }
@@ -84,8 +80,7 @@ public class FirestationsController {
     public ResponseEntity<Void> updateFirestation(@RequestBody FirestationsDTO firestation) {
         log.info("Passe firestation update : " + firestation);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
-        repositorFirestations.getFirestationsRepository()
-                .update(firestationsUnMapper.getDestination(firestation))
+        firestationService.update(firestation)
                 .ifPresentOrElse(retour ->
                 {
                     URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{station}/{adresse}")
@@ -103,21 +98,14 @@ public class FirestationsController {
     @GetMapping(value = "firestation")
     public PersonsBelongFirestationDTO personsBelongFireStation(@RequestParam String stationNumber) {
         log.info("personsBelongFireStation  : " + stationNumber);
-        List<Firestations> station = repositorFirestations
-                .getFirestationsRepository()
-                .personsBelongFirestation(stationNumber);
-
-        return serviceFactory.getPersonalBelongFirestationFactory().createPersonFirestation(station);
+        return firestationService.personsBelongFireStation(stationNumber);
 
     }
 
     @GetMapping(value = "phoneAlert")
     public List<PersonsPhoneDTO> phoneAlerte(@RequestParam String firestation_number) {
         log.info("phoneAlerte  : " + firestation_number);
-        List<Firestations> station = repositorFirestations
-                .getFirestationsRepository()
-                .personsBelongFirestation(firestation_number);
-        return serviceFactory.getPersonsPhoneFactory().createPersonsPhone(station);
+        return firestationService.phoneAlerte(firestation_number);
 
     }
 
@@ -152,16 +140,16 @@ public class FirestationsController {
                     .getFirestationsRepository()
                     .personsBelongFirestation(stat)
                     .forEach(pers ->
-            {
-                    List<PersonsMedicalsDTO> personeMedicalsList = serviceFactory.getPersonsMedicalsFactory().createPersonsMedicals(pers.getPersonsList(),stat);
-                    StringBuilder sb=new StringBuilder();
-                    sb.append("Station ")
-                            .append(stat)
-                            .append(" / ")
-                            .append(pers.getAddress());
-                    retour.put(sb.toString(), personeMedicalsList);
+                    {
+                        List<PersonsMedicalsDTO> personeMedicalsList = serviceFactory.getPersonsMedicalsFactory().createPersonsMedicals(pers.getPersonsList(), stat);
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("Station ")
+                                .append(stat)
+                                .append(" / ")
+                                .append(pers.getAddress());
+                        retour.put(sb.toString(), personeMedicalsList);
 
-            });
+                    });
         });
         return retour;
     }

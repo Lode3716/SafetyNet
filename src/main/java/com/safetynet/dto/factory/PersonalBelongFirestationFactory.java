@@ -30,7 +30,7 @@ public class PersonalBelongFirestationFactory {
                 {
                     station.getPersonsList().forEach(persons ->
                             {
-                                personsFirestationDTO.add(serviceFactory.getPersonsFirestationFactory().creatPersonsFirestation(persons.getFirstName(), persons.getLastName(), persons.getAddress()));
+                                personsFirestationDTO.add(serviceFactory.getPersonsFirestationFactory().creatPersonsFirestation(persons.getFirstName(), persons.getLastName(), persons.getAddress(),persons.getPhone()));
 
                                 utilsDTO.calculAge(persons.getMedicalrecords().getBirthdate())
                                         .ifPresent(age ->
