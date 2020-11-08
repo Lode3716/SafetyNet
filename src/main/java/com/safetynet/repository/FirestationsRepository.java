@@ -76,7 +76,7 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
                 .findFirst()
                 .ifPresent(maj ->
                 {
-                    log.info("Mise à jour de la firestation : " + firestation.getStation());
+                    log.debug("Repository : Mise à jour de la firestation {}",firestation.getStation());
                     maj.setStation(firestation.getStation());
                 });
         return Optional.of(firestation);

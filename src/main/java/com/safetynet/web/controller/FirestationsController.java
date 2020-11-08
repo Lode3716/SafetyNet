@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,12 +42,14 @@ public class FirestationsController {
 
     @GetMapping(value = "firestation/all")
     public List<FirestationsDTO> readAllFirestations() {
+        log.info("GET list all firestation.");
+        log.debug("Get all firestation : {}",firestationService.findAll().size());
         return firestationService.findAll();
     }
 
     @PostMapping(value = "firestation")
     public ResponseEntity<Void> addFirestations(@RequestBody FirestationsDTO firestation) {
-        log.info("Passe add firestation : " + firestation);
+        log.info("POST add firestation : {}",firestation);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
 
         firestationService.add(firestation)
@@ -62,31 +63,30 @@ public class FirestationsController {
                 {
                     rep.set(ResponseEntity.noContent().build());
                 });
-
+        log.debug("Post add firestation : {}, for firestation : {}",rep.get(),firestation);
         return rep.get();
     }
 
     @DeleteMapping(value = "firestation")
     public ResponseEntity<Void> deleteFirestation(@RequestBody FirestationsDTO oldFirestation) {
-        log.info("Passe firestation : " + oldFirestation);
+        log.info("DELETE firestation : {}",oldFirestation);
         Boolean retour = firestationService.delete(oldFirestation);
         if (!retour) {
+            log.error("Delete firestation not found : {}",oldFirestation);
             throw new FirestationsIntrouvablesException("La station se nommant " + oldFirestation.getStation() + "est introuvable.");
         }
+        log.debug("Delete FIFrestation response ok : {}",oldFirestation);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping(value = "firestation")
     public ResponseEntity<Void> updateFirestation(@RequestBody FirestationsDTO firestation) {
-        log.info("Passe firestation update : " + firestation);
+        log.info("PUT update firestation : {}",firestation);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
         firestationService.update(firestation)
                 .ifPresentOrElse(retour ->
                 {
-                    URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{station}/{adresse}")
-                            .buildAndExpand(firestation.getStation(), firestation.getAddress())
-                            .toUri();
-                    rep.set(ResponseEntity.created(location).build());
+                    rep.set(ResponseEntity.ok().build());
                 }, () ->
                 {
                     rep.set(ResponseEntity.noContent().build());
@@ -97,62 +97,36 @@ public class FirestationsController {
 
     @GetMapping(value = "firestation")
     public PersonsBelongFirestationDTO personsBelongFireStation(@RequestParam String stationNumber) {
-        log.info("personsBelongFireStation  : " + stationNumber);
-        return firestationService.personsBelongFireStation(stationNumber);
+        log.info("GET search list person for number station and count by age : {}" + stationNumber);
+        return firestationService.getPersonsBelongFireStation(stationNumber);
 
     }
 
     @GetMapping(value = "phoneAlert")
-    public List<PersonsPhoneDTO> phoneAlerte(@RequestParam String firestation_number) {
-        log.info("phoneAlerte  : " + firestation_number);
-        return firestationService.phoneAlerte(firestation_number);
+    public List<PersonsPhoneDTO> phoneAlerte(@RequestParam String stationNumber) {
+        log.info("GET search person phone for number station : {}" , stationNumber);
+        return firestationService.getPhoneAlerte(stationNumber);
 
     }
 
     @GetMapping(value = "childAlert")
     public ChildStationDTO childAlertStation(@RequestParam String address) {
-        log.info("childAlertStation : " + address);
-        List<Persons> persons = repositorFirestations
-                .getFirestationsRepository()
-                .personsAdress(address);
-        return serviceFactory.getChildStationFactory().createChildStationDTO(persons);
+        log.info("GET search lis child for adress and list person of family : {} : ",address);
+        return firestationService.getChildAlertStation(address);
 
     }
 
     @GetMapping(value = "fire")
     public List<PersonsMedicalStationDTO> fireAdress(@RequestParam String address) {
-        log.info("fireAdress : " + address);
-        List<Persons> persons = repositorFirestations
-                .getFirestationsRepository()
-                .personsAdress(address);
-        return serviceFactory.getPersonsMedicalsStationFactory().createPersonsMedicals(persons);
+        log.info("GET list person live at adress and casern station : {}",address);
+        return firestationService.getFireAdress(address);
 
     }
 
     @GetMapping(value = "flood/")
-    public Map<String, List<PersonsMedicalsDTO>> floodStation(@RequestParam List<String> stations) {
-        log.info("floodStation : " + stations);
-        Map<String, List<PersonsMedicalsDTO>> retour = new HashMap<>();
-        stations.forEach(stat ->
-        {
-            log.info(stat);
-            repositorFirestations
-                    .getFirestationsRepository()
-                    .personsBelongFirestation(stat)
-                    .forEach(pers ->
-                    {
-                        List<PersonsMedicalsDTO> personeMedicalsList = serviceFactory.getPersonsMedicalsFactory().createPersonsMedicals(pers.getPersonsList(), stat);
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("Station ")
-                                .append(stat)
-                                .append(" / ")
-                                .append(pers.getAddress());
-                        retour.put(sb.toString(), personeMedicalsList);
-
-                    });
-        });
-        return retour;
+    public Map<FirestationsDTO, List<PersonsMedicalsDTO>> floodStation(@RequestParam List<String> stations) {
+        log.info("GET list person family by numero station : {}", stations);
+        return firestationService.getFloodStation(stations);
     }
-
-
+    
 }

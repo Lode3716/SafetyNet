@@ -1,10 +1,8 @@
 package com.safetynet.dto.factory;
 
-import lombok.Getter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Getter
 @Configuration
 public class ServiceFactoryImpl implements ServiceFactory {
 
@@ -59,6 +57,6 @@ public class ServiceFactoryImpl implements ServiceFactory {
     @Bean
     @Override
     public PersonEmailFactory getPersonEmailFactory() {
-        return  new PersonEmailFactory();
+        return new PersonEmailFactory();
     }
 }
