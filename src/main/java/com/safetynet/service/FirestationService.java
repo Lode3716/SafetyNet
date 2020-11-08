@@ -2,15 +2,13 @@ package com.safetynet.service;
 
 import com.googlecode.jmapper.JMapper;
 import com.safetynet.dto.*;
-import com.safetynet.model.Firestations;
 import com.safetynet.dto.factory.ServiceFactory;
+import com.safetynet.model.Firestations;
 import com.safetynet.model.Persons;
 import com.safetynet.repository.RepositoryService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 import java.util.*;
 

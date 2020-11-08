@@ -130,16 +130,16 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
         database.getFirestationsList()
                 .forEach(firestations ->
                         {
-                            log.info("Numero de station : " + firestations.getStation());
-                            if (persons.getAddress().equals(firestations.getAddress())) {
-                                log.info("Associe personne : " + persons.getFirstName() + " " + persons.getLastName() + " / adress pers :" + persons.getAddress() + " / " + firestations.getAddress());
+                           if (persons.getAddress().equals(firestations.getAddress())) {
+                                log.debug("Associe personne : {}, {}",persons.getFirstName(),persons.getLastName());
+                                log.debug("Adress pers : "+persons.getAddress()+" / adress firestation : "+firestations.getAddress());
                                 listFires.add(firestations);
                             }
                         }
                 );
         persons.setFirestations(listFires);
 
-        log.debug("PersonRepository : Construit les associations Persons: " + persons);
+        log.debug("Repository : Associate  person and Firestation : {}", persons);
         return persons;
 
     }
