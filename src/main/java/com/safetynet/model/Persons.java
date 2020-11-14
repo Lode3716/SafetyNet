@@ -1,13 +1,17 @@
 package com.safetynet.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString(callSuper = true)
 public class Persons extends Individu implements Serializable {
 

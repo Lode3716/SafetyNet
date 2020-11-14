@@ -1,20 +1,17 @@
 package com.safetynet.model;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @ToString()
-public class Individu {
+@EqualsAndHashCode(of = {"firstName", "lastName"})
+public class Individu implements Serializable {
 
     private String firstName;
     private String lastName;
 
-    public Individu() {
-    }
-
-    public Individu(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
 }

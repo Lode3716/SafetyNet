@@ -5,15 +5,14 @@ import com.safetynet.dto.PersonsEmailDTO;
 import com.safetynet.dto.PersonsMedicationAdresseDTO;
 import com.safetynet.model.Persons;
 import com.safetynet.service.PersonsService;
+import com.safetynet.web.exceptions.BadArgumentsException;
 import com.safetynet.web.exceptions.PersonsIntrouvableException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,24 +38,27 @@ public class PersonsController {
                 .orElseThrow(() -> new PersonsIntrouvableException("La personne se nommant " + nom + " " + prenom + "est introuvable."));
     }
 
+    /**
+     * Person to add
+     * @param person to save
+     * @return ResponseEntity<PersonsDto> if exist else throw BadArgumentsException
+     */
     @PostMapping(value = "person")
-    public PersonsDto addPersons(@RequestBody PersonsDto persons) {
-        log.info("POST add person : {}", persons);
-        AtomicReference<ResponseEntity> rep = new AtomicReference<>();
+    public ResponseEntity<PersonsDto> addPersons(@RequestBody PersonsDto person) {
+        log.debug("POST:  create person : {}", person);
 
-        personsService.addPersons(persons)
-                .ifPresentOrElse(retour ->
+        if(person.getLastName().isBlank() || person.getFirstName().isBlank())
+        {
+            throw new BadArgumentsException("POST : firstName and lastName are not null for create personDTO");
+        }
+        AtomicReference<ResponseEntity> rep = new AtomicReference<>();
+        personsService.addPersons(person)
+                .ifPresent(retour ->
                 {
-                    URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{nom}/{prenom}")
-                            .buildAndExpand(persons.getLastName(), persons.getFirstName())
-                            .toUri();
-                    log.debug("POST add person, created : {}", location);
-                    rep.set(ResponseEntity.created(location).build());
-                }, () ->
-                {
-                    log.error("POST add person, exist : {}", persons);
-                    rep.set(ResponseEntity.noContent().build());
+                    log.info("POST: create person - SUCCESS");
+                    rep.set(ResponseEntity.status(HttpStatus.CREATED).body(retour));
                 });
+
         return rep.get();
     }
 
@@ -66,24 +68,16 @@ public class PersonsController {
         Boolean retour = personsService.deletePerson(person);
         if (!retour) {
             log.error("Delete person not found : {}", person);
-            throw new PersonsIntrouvableException("La personne se nommant " + person.getLastName() + "est introuvable.");
+            throw new PersonsIntrouvableException("The person with the name " + person.getLastName() + " could not be found.");
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @PutMapping(value = "person")
     public PersonsDto updatePerson(@RequestBody PersonsDto person) {
         log.info("PUT update person : {}", person);
-        AtomicReference<ResponseEntity> rep = new AtomicReference<>();
-        personsService.updatePerson(person)
-                .ifPresentOrElse(retour ->
-                {
-                    rep.set(ResponseEntity.ok().build());
-                }, () ->
-                {
-                    rep.set(ResponseEntity.noContent().build());
-                });
-        return rep.get();
+        return personsService.updatePerson(person)
+                .orElseThrow(PersonsIntrouvableException::new);
     }
 
 

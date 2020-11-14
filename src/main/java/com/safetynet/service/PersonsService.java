@@ -42,17 +42,19 @@ public class PersonsService {
         return list;
     }
 
-    public Optional<Persons> addPersons(PersonsDto persons) {
-        return repositorPersons.getPersonsRepository().add(personUnMapper.getDestination(persons));
+    public Optional<PersonsDto> addPersons(PersonsDto persons) {
+        Optional<Persons> person=repositorPersons.getPersonsRepository().add(personUnMapper.getDestination(persons));
+        return Optional.of(personMapper.getDestination(person.get()));
     }
 
 
-    public boolean deletePerson(@RequestBody PersonsDto person) {
+    public boolean deletePerson(PersonsDto person) {
         return repositorPersons.getPersonsRepository().delete(personUnMapper.getDestination(person));
     }
 
-    public Optional<Persons> updatePerson(@RequestBody PersonsDto person) {
-        return repositorPersons.getPersonsRepository().update(personUnMapper.getDestination(person));
+    public Optional<PersonsDto> updatePerson(PersonsDto personsDto) {
+         Optional<Persons> person=repositorPersons.getPersonsRepository().update(personUnMapper.getDestination(personsDto));
+        return Optional.of(personMapper.getDestination(person.get()));
     }
 
     public List<PersonsMedicationAdresseDTO> getPersonInfo(String firstName, String lastName) {

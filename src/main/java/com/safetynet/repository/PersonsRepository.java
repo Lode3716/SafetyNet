@@ -36,12 +36,11 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
     @Override
     public Optional<Persons> add(Persons persons) {
         if (exist(persons) == Boolean.FALSE) {
+            log.debug("Repository :  create new person : {}",persons.getFirstName());
             database.getPersonsList().add(contrustPersons(persons));
             return Optional.of(persons);
         }
-
-
-        return Optional.empty();
+        return Optional.of(persons);
     }
 
     @Override
