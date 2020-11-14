@@ -10,7 +10,6 @@ import com.safetynet.repository.RepositoryService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +42,7 @@ public class PersonsService {
     }
 
     public Optional<PersonsDto> addPersons(PersonsDto persons) {
-        Optional<Persons> person=repositorPersons.getPersonsRepository().add(personUnMapper.getDestination(persons));
+        Optional<Persons> person = repositorPersons.getPersonsRepository().add(personUnMapper.getDestination(persons));
         return Optional.of(personMapper.getDestination(person.get()));
     }
 
@@ -53,11 +52,22 @@ public class PersonsService {
     }
 
     public Optional<PersonsDto> updatePerson(PersonsDto personsDto) {
-         Optional<Persons> person=repositorPersons.getPersonsRepository().update(personUnMapper.getDestination(personsDto));
-        return Optional.of(personMapper.getDestination(person.get()));
+        Optional<Persons> person = repositorPersons.getPersonsRepository().update(personUnMapper.getDestination(personsDto));
+        if (person.isPresent()) {
+            return Optional.of(personMapper.getDestination(person.get()));
+        } else {
+            return Optional.empty();
+        }
     }
 
-    public List<PersonsMedicationAdresseDTO> getPersonInfo(String firstName, String lastName) {
+    /**
+     * Construct List all the people with the same names
+     *
+     * @param firstName
+     * @param lastName
+     * @return list person with sames names
+     */
+    public Optional<List<PersonsMedicationAdresseDTO>> getPersonInfo(String firstName, String lastName) {
         List<PersonsMedicationAdresseDTO> dtoList = new ArrayList<>();
         repositorPersons.getPersonsRepository().searchAllName(lastName, firstName)
                 .ifPresent(lst ->
@@ -67,22 +77,36 @@ public class PersonsService {
                         dtoList.add(serviceFactory.getPersonsMedicationAdresseFactory().createPersonMedical(persons));
                     });
                 });
-        return dtoList;
+        if (dtoList.isEmpty()) {
+            return Optional.empty();
+        }
+        log.info("SERVICE : construct list same Name : {}", dtoList.size());
+        return Optional.of(dtoList);
     }
 
-    public List<PersonsEmailDTO> getPersonsEmail(String city) {
+    /**
+     * Construct List the email addresses of all the inhabitants of the city
+     *
+     * @param city
+     * @return List the email
+     */
+    public Optional<List<PersonsEmailDTO>> getPersonsEmail(String city) {
         List<PersonsEmailDTO> dtoList = new ArrayList<>();
         repositorPersons.getPersonsRepository()
                 .searchEmailCity(city)
                 .ifPresent(lst ->
                         lst.forEach(mail ->
                                 dtoList.add(serviceFactory.getPersonEmailFactory().create(mail))));
-        return dtoList;
+        if (dtoList.isEmpty()) {
+            return Optional.empty();
+        }
+        log.info("SERVICE : construct list all email by city : {}", dtoList.size());
+        return Optional.of(dtoList);
     }
 
     public Optional<Persons> getFindPerson(String nom, String prenom) {
         log.info("Entre dans read Person by Elements " + nom + " " + prenom);
-        return repositorPersons.getPersonsRepository().finByElements(nom, prenom);
+        return repositorPersons.getPersonsRepository().findByElements(nom, prenom);
     }
 
 }
