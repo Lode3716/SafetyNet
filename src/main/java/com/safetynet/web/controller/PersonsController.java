@@ -40,7 +40,7 @@ public class PersonsController {
     }
 
     @PostMapping(value = "person")
-    public ResponseEntity<Void> addPersons(@RequestBody PersonsDto persons) {
+    public PersonsDto addPersons(@RequestBody PersonsDto persons) {
         log.info("POST add person : {}", persons);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
 
@@ -72,7 +72,7 @@ public class PersonsController {
     }
 
     @PutMapping(value = "person")
-    public ResponseEntity<Void> updatePerson(@RequestBody PersonsDto person) {
+    public PersonsDto updatePerson(@RequestBody PersonsDto person) {
         log.info("PUT update person : {}", person);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
         personsService.updatePerson(person)
