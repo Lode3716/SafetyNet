@@ -53,15 +53,16 @@
 
     <Loggers>
 
-        <Logger name="com.howtodoinjava.app" additivity="false">
-            <AppenderRef ref="debugLog" />
+        <Logger additivity="false">
+            <AppenderRef ref="debugLog"  />
             <AppenderRef ref="infoLog"  />
             <AppenderRef ref="errorLog" />
-            <AppenderRef ref="Console"  />
+            <AppenderRef ref="Console" level="INFO,DEBUG" />
+
         </Logger>
 
         <Root level="all">
-            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Console" />
         </Root>
 
     </Loggers>
