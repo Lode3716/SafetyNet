@@ -39,10 +39,10 @@ public class PersonsController {
     }
 
     /**
-     * Person to add
+     * New Person Add
      *
      * @param person to save
-     * @return ResponseEntity<PersonsDto> person reternu when is create,if arguments to search is not good : BadArgumentsException
+     * @return ResponseEntity<PersonsDto> person return when is create,if arguments to search is not good : BadArgumentsException
      */
     @PostMapping(value = "person")
     public ResponseEntity<PersonsDto> addPersons(@RequestBody PersonsDto person) {

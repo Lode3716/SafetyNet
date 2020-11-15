@@ -40,10 +40,16 @@ public class FirestationService {
         return list;
     }
 
-    public Optional<Firestations> add(FirestationsDTO firestation) {
-        return repositorFirestations.getFirestationsRepository()
+    /**
+     * Add firestation and Map Firestation DTO
+     *
+     * @param firestation
+     * @return FirestationDTO
+     */
+    public Optional<FirestationsDTO> add(FirestationsDTO firestation) {
+        Optional<Firestations> fire= repositorFirestations.getFirestationsRepository()
                 .add(firestationsUnMapper.getDestination(firestation));
-
+        return Optional.of(firestationsMapper.getDestination(fire.get()));
     }
 
     public Optional<Firestations> update(FirestationsDTO firestation) {

@@ -7,9 +7,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Log4j2
@@ -30,35 +32,28 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
     public Optional<Firestations> add(Firestations firestations) {
         if (exist(firestations) == Boolean.FALSE) {
             database.getFirestationsList().add(firestations);
+            constructFirestation(firestations);
             return Optional.of(firestations);
         }
-        return Optional.empty();
+        return Optional.of(firestations);
     }
 
     @Override
     public boolean delete(Firestations firestation) {
+        if (exist(firestation)) {
+            log.info("Repository before firestation delete : {}" + database.getFirestationsList().size());
 
-        AtomicBoolean retour = new AtomicBoolean(Boolean.FALSE);
-        database.getFirestationsList()
-                .stream()
-                .filter(search -> firestation.getAddress().equals(search.getAddress()) || firestation.getStation().equals(search.getStation()))
-                .findFirst()
-                .ifPresent(fire ->
-                {
+            database.getFirestationsList()
+                    .stream()
+                    .filter(search -> firestation.getAddress().equals(search.getAddress()) && firestation.getStation().equals(search.getStation()))
+                    .findFirst()
+                    .ifPresent(fire -> database.getFirestationsList().remove(fire));
 
-                    log.info("Mapping Station supprimer : " + firestation);
-
-                    if (firestation.getAddress().isBlank()) {
-                        fire.setAddress("");
-                    }
-                    if (firestation.getStation().isBlank()) {
-                        fire.setStation("");
-                    }
-                    retour.set(true);
-                });
-
-        return retour.get();
-
+            log.info("Repository after firestation delete : {}" + database.getFirestationsList().size());
+            log.info("Repository firestation - DELETE");
+        return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
     }
 
     @Override
@@ -76,7 +71,7 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
                 .findFirst()
                 .ifPresent(maj ->
                 {
-                    log.debug("Repository : Mise à jour de la firestation {}",firestation.getStation());
+                    log.debug("Repository : Mise à jour de la firestation {}", firestation.getStation());
                     maj.setStation(firestation.getStation());
                 });
         return Optional.of(firestation);
@@ -91,12 +86,36 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
     }
 
     public List<Persons> personsAdress(String station) {
-        return database.getFirestationsList()
+        AtomicReference<List<Persons>> atomPersons=new AtomicReference<>();
+         database.getFirestationsList()
                 .stream()
                 .filter(stattion -> station.equals(stattion.getAddress()))
-                .map(Firestations::getPersonsList)
+                .forEach(firestations ->
+                        {
+                            Optional.ofNullable(firestations.getPersonsList())
+                                    .ifPresent(list->atomPersons.set(list));
+
+                        });
+
+         return Optional.ofNullable(atomPersons.get()).orElse(Collections.emptyList());
+    }
+
+    /**
+     * Associates List person living at this address of the fire station
+     *
+     * @param firestation
+     */
+    private void constructFirestation(Firestations firestation) {
+        database.getFirestationsList()
+                .stream()
+                .filter(station -> firestation.getStation().equals(station.getStation()) && firestation.getAddress().equals(station.getAddress()))
                 .findFirst()
-                .get();
+                .ifPresent(station ->
+                {
+                    Optional.ofNullable(personsAdress(station.getAddress()))
+                            .ifPresent(listPersons->station.setPersonsList(listPersons));
+                    log.debug("Repository after firestation with list person  : {}", station.getPersonsList().size());
+                });
     }
 
 }

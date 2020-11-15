@@ -49,7 +49,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
                     .findFirst()
                     .ifPresent(s -> database.getPersonsList().remove(deleteContrustPersons(s)));
 
-            log.debug("Repository before person delete : {}", database.getPersonsList().size());
+            log.debug("Repository after person delete : {}", database.getPersonsList().size());
             return Boolean.TRUE;
         }
         return Boolean.FALSE;

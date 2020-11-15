@@ -104,7 +104,7 @@ class PersonsControllerIT {
 
     @Test
     @DisplayName("Given null id of personDTO, when requesting DELETE, throws a BadArgumentsException")
-    public void givenBadIdPersons_whenDELETERequest_thenReturnBadArgumentsException() throws Exception {
+    public void givenBadIdPersons_whenDeleteRequest_thenReturnBadArgumentsException() throws Exception {
         PersonsDto personsDto = new PersonsDto("", "Boyd", "Moulinsard", "City", "ZIP", "09-08-07-05", "dupont@email.com");
 
         mvc.perform(MockMvcRequestBuilders.delete("/person")
@@ -117,7 +117,7 @@ class PersonsControllerIT {
 
     @Test
     @DisplayName("Given person not exist , when requesting DELETE, throws a PersonsNotFoundException")
-    public void givenPersonNotExist_whenDELETERequest_thenReturnPersonsNotFoundException() throws Exception {
+    public void givenPersonNotExist_whenDeleteRequest_thenReturnPersonsNotFoundException() throws Exception {
         PersonsDto personsDto = new PersonsDto("Johnna", "Boyd", "1509 Culver St", "Culver", "97451", "841-874-6512", "jaboyd@email.com");
 
         mvc.perform(MockMvcRequestBuilders.delete("/person")

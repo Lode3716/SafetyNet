@@ -2,15 +2,14 @@ package com.safetynet.web.controller;
 
 import com.safetynet.dto.*;
 import com.safetynet.service.FirestationService;
-import com.safetynet.web.exceptions.FirestationsIntrouvablesException;
+import com.safetynet.web.exceptions.BadArgumentsException;
+import com.safetynet.web.exceptions.FirestationNotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -29,36 +28,44 @@ public class FirestationsController {
         return firestationService.findAll();
     }
 
+    /**
+     * New Firestation to add
+     *
+     * @param firestation to save
+     * @return ResponseEntity<FirestationsDTO> firestation return when is create,if arguments to search is not good : BadArgumentsException
+     */
     @PostMapping(value = "firestation")
-    public ResponseEntity<Void> addFirestations(@RequestBody FirestationsDTO firestation) {
-        log.info("POST add firestation : {}", firestation);
+    public ResponseEntity<FirestationsDTO> addFirestations(@RequestBody FirestationsDTO firestation) {
+        log.debug("POST : create firestation : {}", firestation);
         AtomicReference<ResponseEntity> rep = new AtomicReference<>();
 
+        if (firestation.getStation().isBlank() || firestation.getAddress().isBlank()) {
+            throw new BadArgumentsException("POST : Station or adress are not null for create Firestation");
+        }
         firestationService.add(firestation)
-                .ifPresentOrElse(retour ->
+                .ifPresent(retour ->
                 {
-                    URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{station}/{adress}")
-                            .buildAndExpand(firestation.getStation(), firestation.getAddress())
-                            .toUri();
-                    rep.set(ResponseEntity.created(location).build());
-                }, () ->
-                {
-                    rep.set(ResponseEntity.noContent().build());
+                    log.info("POST: create Firestation - SUCCESS");
+                    rep.set(ResponseEntity.status(HttpStatus.CREATED).body(retour));
                 });
-        log.debug("Post add firestation : {}, for firestation : {}", rep.get(), firestation);
         return rep.get();
     }
 
+
     @DeleteMapping(value = "firestation")
-    public ResponseEntity<Void> deleteFirestation(@RequestBody FirestationsDTO oldFirestation) {
-        log.info("DELETE firestation : {}", oldFirestation);
-        Boolean retour = firestationService.delete(oldFirestation);
-        if (!retour) {
-            log.error("Delete firestation not found : {}", oldFirestation);
-            throw new FirestationsIntrouvablesException("La station se nommant " + oldFirestation.getStation() + "est introuvable.");
+    public ResponseEntity<Void> deleteFirestation(@RequestBody FirestationsDTO firestation) {
+        log.debug("DELETE : firestation : {}", firestation);
+        if (firestation.getStation().isBlank() || firestation.getAddress().isBlank()) {
+            throw new BadArgumentsException("DELETE : Station or adress are not null for create Firestation");
         }
-        log.debug("Delete FIFrestation response ok : {}", oldFirestation);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        Boolean retour = firestationService.delete(firestation);
+        if (!retour) {
+            log.error("Delete firestation not found : {}", firestation);
+            throw new FirestationNotFoundException("The firestation with the name " + firestation.getStation() + " could not be found.");
+        }
+        log.info("Delete : firestation response : SUCCES");
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
     @PutMapping(value = "firestation")
