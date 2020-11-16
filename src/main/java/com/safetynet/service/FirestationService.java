@@ -47,34 +47,46 @@ public class FirestationService {
      * @return FirestationDTO
      */
     public Optional<FirestationsDTO> add(FirestationsDTO firestation) {
-        Optional<Firestations> fire= repositorFirestations.getFirestationsRepository()
+        Optional<Firestations> fire = repositorFirestations.getFirestationsRepository()
                 .add(firestationsUnMapper.getDestination(firestation));
         return Optional.of(firestationsMapper.getDestination(fire.get()));
     }
 
-    public Optional<Firestations> update(FirestationsDTO firestation) {
-        return repositorFirestations.getFirestationsRepository()
-                .update(firestationsUnMapper.getDestination(firestation));
+    public Optional<FirestationsDTO> update(FirestationsDTO firestationDTO) {
+        Optional<Firestations> firestation = repositorFirestations.getFirestationsRepository()
+                .update(firestationsUnMapper.getDestination(firestationDTO));
+        if (firestation.isPresent()) {
+            return Optional.of(firestationsMapper.getDestination(firestation.get()));
+        } else {
+            return Optional.empty();
+        }
     }
 
     public boolean delete(FirestationsDTO firestationsDTO) {
         return repositorFirestations.getFirestationsRepository().delete(firestationsUnMapper.getDestination(firestationsDTO));
     }
 
-    public PersonsBelongFirestationDTO getPersonsBelongFireStation(String stationNumber) {
+    public Optional<PersonsBelongFirestationDTO> getPersonsBelongFireStation(String stationNumber) {
         List<Firestations> station = repositorFirestations
                 .getFirestationsRepository()
                 .personsBelongFirestation(stationNumber);
-
-        return serviceFactory.getPersonalBelongFirestationFactory().createPersonFirestation(station);
+        log.info("Service : Number station for create persons {}",station.size());
+        if (station.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(serviceFactory.getPersonalBelongFirestationFactory().createPersonFirestation(station));
 
     }
 
-    public List<PersonsPhoneDTO> getPhoneAlerte(String firestation_number) {
+    public Optional<List<PersonsPhoneDTO>> getPhoneAlerte(String firestation_number) {
         List<Firestations> station = repositorFirestations
                 .getFirestationsRepository()
                 .personsBelongFirestation(firestation_number);
-        return serviceFactory.getPersonsPhoneFactory().createPersonsPhone(station);
+        log.info("Service : Number station for create list phones {}",station.size());
+        if (station.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(serviceFactory.getPersonsPhoneFactory().createPersonsPhone(station));
     }
 
     public ChildStationDTO getChildAlertStation(String address) {

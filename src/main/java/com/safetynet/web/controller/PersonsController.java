@@ -66,9 +66,8 @@ public class PersonsController {
      * Person to delete
      *
      * @param person to delete
-     * @return ResponseEntity<PersonsDto> if exist delete person else PersonsNotFoundException, if arguments to search is not good : BadArgumentsException
+     * @return ResponseEntity<void> if exist delete person else PersonsNotFoundException, if arguments to search is not good : BadArgumentsException
      */
-
     @DeleteMapping(value = "person")
     public ResponseEntity<Void> deletePerson(@RequestBody PersonsDto person) {
         log.debug("DELETE : person {}", person);

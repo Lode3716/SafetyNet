@@ -51,7 +51,12 @@ public class FirestationsController {
         return rep.get();
     }
 
-
+    /**
+     * Firestation to delete
+     *
+     * @param firestation to delete
+     * @return if firestation exist delete and return response Accepted else FirestationNotFoundException, if arguments to search is not good : BadArgumentsException
+     */
     @DeleteMapping(value = "firestation")
     public ResponseEntity<Void> deleteFirestation(@RequestBody FirestationsDTO firestation) {
         log.debug("DELETE : firestation : {}", firestation);
@@ -68,33 +73,55 @@ public class FirestationsController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 
+    /**
+     * firestation to update station by address
+     *
+     * @param firestation to update
+     * @return ResponseEntity<FirestationsDTO> if exist update person firestation FirestationNotFoundException, if arguments to search is not good : BadArgumentsException
+     */
     @PutMapping(value = "firestation")
-    public ResponseEntity<Void> updateFirestation(@RequestBody FirestationsDTO firestation) {
-        log.info("PUT update firestation : {}", firestation);
-        AtomicReference<ResponseEntity> rep = new AtomicReference<>();
-        firestationService.update(firestation)
-                .ifPresentOrElse(retour ->
-                {
-                    rep.set(ResponseEntity.ok().build());
-                }, () ->
-                {
-                    rep.set(ResponseEntity.noContent().build());
-                });
+    public ResponseEntity<FirestationsDTO> updateFirestation(@RequestBody FirestationsDTO firestation) {
+        log.debug("PUT : update firestation : {}", firestation);
+        if (firestation.getStation().isBlank() || firestation.getAddress().isBlank()) {
+            throw new BadArgumentsException("PUT : Station or adress are not null for update firestation");
+        }
 
-        return rep.get();
+        return ResponseEntity.status(HttpStatus.OK.value())
+                .body(firestationService.update(firestation)
+                        .orElseThrow(FirestationNotFoundException::new));
     }
 
+    /**
+     * List person for number station and count by age
+     * @param stationNumber
+     * @return list Person
+     */
     @GetMapping(value = "firestation")
-    public PersonsBelongFirestationDTO personsBelongFireStation(@RequestParam String stationNumber) {
-        log.info("GET search list person for number station and count by age : {}" + stationNumber);
-        return firestationService.getPersonsBelongFireStation(stationNumber);
+    public ResponseEntity<PersonsBelongFirestationDTO> personsBelongFireStation(@RequestParam String stationNumber) {
+        log.debug("GET search list person for number station and count by age : {}" + stationNumber);
+        if (stationNumber.isBlank()) {
+            throw new BadArgumentsException("GET : Station number is  not null for create list person");
+        }
+        return ResponseEntity.status(HttpStatus.OK.value())
+                .body(firestationService.getPersonsBelongFireStation(stationNumber)
+                        .orElseThrow(FirestationNotFoundException::new));
 
     }
 
+    /**
+     * List of the telephone numbers of residents served by the fire station
+     * @param stationNumber
+     * @return list phone
+     */
     @GetMapping(value = "phoneAlert")
-    public List<PersonsPhoneDTO> phoneAlerte(@RequestParam String stationNumber) {
-        log.info("GET search person phone for number station : {}", stationNumber);
-        return firestationService.getPhoneAlerte(stationNumber);
+    public ResponseEntity<List<PersonsPhoneDTO>> phoneAlerte(@RequestParam String firestation) {
+        log.info("GET search person phone for number station : {}", firestation);
+        if (firestation.isBlank()) {
+            throw new BadArgumentsException("GET : Station number is  not null for create list phone");
+        }
+        return ResponseEntity.status(HttpStatus.OK.value())
+                .body(firestationService.getPhoneAlerte(firestation)
+                        .orElseThrow(FirestationNotFoundException::new));
 
     }
 

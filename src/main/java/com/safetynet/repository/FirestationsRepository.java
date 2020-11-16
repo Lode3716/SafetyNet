@@ -65,18 +65,32 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
 
     @Override
     public Optional<Firestations> update(Firestations firestation) {
-
+        AtomicReference<Firestations> atoFirestation=new AtomicReference<>();
         database.getFirestationsList().stream()
                 .filter(search -> firestation.getAddress().equals(search.getAddress()))
                 .findFirst()
                 .ifPresent(maj ->
                 {
-                    log.debug("Repository : Mise à jour de la firestation {}", firestation.getStation());
+                    log.info("Repository : Mise à jour de la firestation {}", maj.getStation());
                     maj.setStation(firestation.getStation());
+                    log.info("Repository : Mise à jour de la firestation {}", firestation.getStation());
+                    atoFirestation.set(maj);
                 });
-        return Optional.of(firestation);
+       if(Optional.ofNullable(atoFirestation.get()).isPresent())
+        {
+            log.info("Repository : firestation update  - succes ");
+            return Optional.of(atoFirestation.get());
+        }else{
+           log.info("Repository : firestation not exist - not update");
+           return Optional.empty();
+        }
     }
 
+    /**
+     * List all station by id
+     * @param idSation
+     * @return List firestation
+     */
     public List<Firestations> personsBelongFirestation(String idSation) {
         return database.getFirestationsList()
                 .stream()
