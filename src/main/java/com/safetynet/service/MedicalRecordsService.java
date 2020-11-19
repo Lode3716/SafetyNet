@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Log4j2
 @Service
-public class MedicalRecordsService {
+public class MedicalRecordsService implements IMedicalRecordsService {
 
     @Autowired
     RepositoryService repositorMedicalRecords;
@@ -25,6 +25,7 @@ public class MedicalRecordsService {
     @Autowired
     JMapper<Medicalrecords, MedicalRecordsDTO> medicalRecordsUnMapper;
 
+    @Override
     public List<MedicalRecordsDTO> findAll() {
         List<MedicalRecordsDTO> list = new ArrayList<>();
 
@@ -36,15 +37,18 @@ public class MedicalRecordsService {
         return list;
     }
 
+    @Override
     public Optional<Medicalrecords> add(MedicalRecordsDTO medicalRecordsDTO) {
         return repositorMedicalRecords.getMedicalrecordsRepository()
                 .add(medicalRecordsUnMapper.getDestination(medicalRecordsDTO));
     }
 
+    @Override
     public Optional<Medicalrecords> update(MedicalRecordsDTO medicalRecordsDTO) {
         return repositorMedicalRecords.getMedicalrecordsRepository().update(medicalRecordsUnMapper.getDestination(medicalRecordsDTO));
     }
 
+    @Override
     public Boolean delete(MedicalRecordsDTO medicalRecordsDTO) {
         return repositorMedicalRecords.getMedicalrecordsRepository().delete(medicalRecordsUnMapper.getDestination(medicalRecordsDTO));
     }

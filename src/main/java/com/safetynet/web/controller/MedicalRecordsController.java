@@ -1,11 +1,8 @@
 package com.safetynet.web.controller;
 
-import com.googlecode.jmapper.JMapper;
 import com.safetynet.dto.MedicalRecordsDTO;
-import com.safetynet.model.Medicalrecords;
-import com.safetynet.repository.RepositoryService;
-import com.safetynet.service.MedicalRecordsService;
-import com.safetynet.web.exceptions.MedicalrecordsIntrouvablesException;
+import com.safetynet.service.IMedicalRecordsService;
+import com.safetynet.web.exceptions.MedicalrecordsNotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -23,16 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MedicalRecordsController {
 
     @Autowired
-    RepositoryService repositorMedicalRecords;
-
-    @Autowired
-    JMapper<MedicalRecordsDTO, Medicalrecords> medicalRecordsMapper;
-
-    @Autowired
-    JMapper<Medicalrecords, MedicalRecordsDTO> medicalRecordsUnMapper;
-
-    @Autowired
-    MedicalRecordsService medicalRecordsService;
+    IMedicalRecordsService medicalRecordsService;
 
     @GetMapping(value = "medicalRecord")
     public List<MedicalRecordsDTO> readAllMedicalRecords() {
@@ -80,9 +67,9 @@ public class MedicalRecordsController {
     @DeleteMapping(value = "medicalRecord")
     public ResponseEntity<Void> deletePerson(@RequestBody MedicalRecordsDTO medicalRecord) {
         log.info("Delete medicalRecord :  " + medicalRecord);
-        Boolean retour =medicalRecordsService.delete(medicalRecord);
+        Boolean retour = medicalRecordsService.delete(medicalRecord);
         if (!retour) {
-            throw new MedicalrecordsIntrouvablesException("La personne se nommant " + medicalRecord.getLastName() + "est introuvable.");
+            throw new MedicalrecordsNotFoundException("La personne se nommant " + medicalRecord.getLastName() + "est introuvable.");
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -12,10 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-
 @Log4j2
 @Service
-public class FirestationService {
+public class FirestationService implements IFirestationService {
 
     @Autowired
     RepositoryService repositorFirestations;
@@ -29,6 +28,7 @@ public class FirestationService {
     @Autowired
     JMapper<Firestations, FirestationsDTO> firestationsUnMapper;
 
+    @Override
     public List<FirestationsDTO> findAll() {
         List<FirestationsDTO> list = new ArrayList<>();
         repositorFirestations.getFirestationsRepository().findAll().forEach(fire ->
@@ -40,18 +40,15 @@ public class FirestationService {
         return list;
     }
 
-    /**
-     * Add firestation and Map Firestation DTO
-     *
-     * @param firestation
-     * @return FirestationDTO
-     */
+
+    @Override
     public Optional<FirestationsDTO> add(FirestationsDTO firestation) {
         Optional<Firestations> fire = repositorFirestations.getFirestationsRepository()
                 .add(firestationsUnMapper.getDestination(firestation));
         return Optional.of(firestationsMapper.getDestination(fire.get()));
     }
 
+    @Override
     public Optional<FirestationsDTO> update(FirestationsDTO firestationDTO) {
         Optional<Firestations> firestation = repositorFirestations.getFirestationsRepository()
                 .update(firestationsUnMapper.getDestination(firestationDTO));
@@ -62,10 +59,12 @@ public class FirestationService {
         }
     }
 
+    @Override
     public boolean delete(FirestationsDTO firestationsDTO) {
         return repositorFirestations.getFirestationsRepository().delete(firestationsUnMapper.getDestination(firestationsDTO));
     }
 
+    @Override
     public Optional<PersonsBelongFirestationDTO> getPersonsBelongFireStation(String stationNumber) {
         List<Firestations> station = repositorFirestations
                 .getFirestationsRepository()
@@ -78,6 +77,7 @@ public class FirestationService {
 
     }
 
+    @Override
     public Optional<List<PersonsPhoneDTO>> getPhoneAlerte(String firestation_number) {
         List<Firestations> station = repositorFirestations
                 .getFirestationsRepository()
@@ -89,13 +89,20 @@ public class FirestationService {
         return Optional.of(serviceFactory.getPersonsPhoneFactory().createPersonsPhone(station));
     }
 
-    public ChildStationDTO getChildAlertStation(String address) {
+    @Override
+    public Optional<ChildStationDTO> getChildAlertStation(String address) {
         List<Persons> persons = repositorFirestations
                 .getFirestationsRepository()
                 .personsAdress(address);
-        return serviceFactory.getChildStationFactory().createChildStationDTO(persons);
+        log.info("Service : Adress station child live and parents list {}",persons.size());
+        if (persons.size() == 0 || serviceFactory.getChildStationFactory().createChildStationDTO(persons).isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(serviceFactory.getChildStationFactory().createChildStationDTO(persons).get());
     }
 
+    @Override
     public List<PersonsMedicalStationDTO> getFireAdress(String address) {
         List<Persons> persons = repositorFirestations
                 .getFirestationsRepository()
@@ -103,6 +110,7 @@ public class FirestationService {
         return serviceFactory.getPersonsMedicalsStationFactory().createPersonsMedicals(persons);
     }
 
+    @Override
     public Map<FirestationsDTO, List<PersonsMedicalsDTO>> getFloodStation(List<String> stations) {
         Map<FirestationsDTO, List<PersonsMedicalsDTO>> retour = new HashMap<>();
         stations.forEach(stat ->

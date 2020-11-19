@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Log4j2
 @Repository
-public class PersonsRepository implements BuisnessRepo<Persons> {
+public class PersonsRepository implements IPersonsRepository {
 
     @Autowired
     Database database;
@@ -64,7 +64,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
 
     @Override
     public Optional<Persons> update(Persons persons) {
-        AtomicReference<Persons> atoPerson= new AtomicReference<>();
+        AtomicReference<Persons> atoPerson = new AtomicReference<>();
         if (exist(persons)) {
 
             database.getPersonsList().stream()
@@ -72,7 +72,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
                     .findFirst()
                     .ifPresent(maj ->
                     {
-                        updateContrustPersons(maj,persons);
+                        updateContrustPersons(maj, persons);
                         maj.setAddress(persons.getAddress());
                         maj.setCity(persons.getCity());
                         maj.setEmail(persons.getEmail());
@@ -87,6 +87,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
         return Optional.empty();
     }
 
+    @Override
     public Optional<Persons> findByElements(String nom, String prenom) {
         AtomicReference<Persons> atomicPers = new AtomicReference<>();
         database.getPersonsList().stream()
@@ -103,6 +104,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
         return Optional.of(atomicPers.get());
     }
 
+    @Override
     public Optional<List<Persons>> searchAllName(String nom, String prenom) {
         List<Persons> personsList = new ArrayList<>();
         findByElements(nom, prenom)
@@ -123,14 +125,8 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
         return Optional.of(personsList);
     }
 
-
-    /**
-     * Create a person with classes
-     *
-     * @param persons
-     * @return person
-     */
-    private Persons contrustPersons(Persons persons) {
+    @Override
+    public Persons contrustPersons(Persons persons) {
 
         associatePersonAndMedical(persons);
         associatePersonAndFirestation(persons);
@@ -139,13 +135,8 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
 
     }
 
-    /**
-     * Update to person with classes
-     *
-     * @param persons to update
-     * @return person : update
-     */
-    private Persons updateContrustPersons(Persons oldPerson,Persons newPerson) {
+    @Override
+    public Persons updateContrustPersons(Persons oldPerson, Persons newPerson) {
         deletePersonAndFirestation(oldPerson);
         associatePersonAndFirestation(newPerson);
         log.debug("Repository : update person with parameter Firestation : {}", newPerson);
@@ -153,13 +144,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
 
     }
 
-
-
-    /**
-     * Associates a person and medical for the creation of the class person
-     *
-     * @param persons
-     */
+    @Override
     public void associatePersonAndMedical(Persons persons) {
         database.getMedicalrecordsList()
                 .forEach(medicalrecords ->
@@ -170,11 +155,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
                 });
     }
 
-    /**
-     * Associates a person and firestation for the creation of the class person
-     *
-     * @param persons
-     */
+    @Override
     public void associatePersonAndFirestation(Persons persons) {
         List<Firestations> listFires = new ArrayList<>();
 
@@ -202,16 +183,11 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
         deletePersonAndMedical(person);
         deletePersonAndFirestation(person);
 
-
         return person;
 
     }
 
-    /**
-     * Delete the association between a person and medical
-     *
-     * @param person : delete
-     */
+    @Override
     public void deletePersonAndMedical(Persons person) {
         log.debug("Repository before person Medical association delete : {}", database.getMedicalrecordsList().size());
 
@@ -225,11 +201,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
 
     }
 
-    /**
-     * Associates a person and firestation for the creation of the class person
-     *
-     * @param person : delete
-     */
+    @Override
     public void deletePersonAndFirestation(Persons person) {
         database.getFirestationsList()
                 .stream()
@@ -248,6 +220,7 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
 
     }
 
+    @Override
     public Optional<List<String>> searchEmailCity(String city) {
         List<String> personsList = new ArrayList<>();
 
@@ -272,7 +245,8 @@ public class PersonsRepository implements BuisnessRepo<Persons> {
 
     }
 
-    private boolean emailExist(List<String> personsEmailList, String email) {
+    @Override
+    public boolean emailExist(List<String> personsEmailList, String email) {
         return personsEmailList.stream()
                 .anyMatch(search -> email.equals(search));
     }

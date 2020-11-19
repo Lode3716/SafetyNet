@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 public class ChildStationFactory {
@@ -16,7 +17,7 @@ public class ChildStationFactory {
     @Autowired
     ServiceFactory serviceFactory;
 
-    public ChildStationDTO createChildStationDTO(List<Persons> personsLive) {
+    public Optional<ChildStationDTO> createChildStationDTO(List<Persons> personsLive) {
         ChildStationDTO child = new ChildStationDTO();
 
         UtilsDTO utilsDTO = new UtilsDTO();
@@ -43,11 +44,11 @@ public class ChildStationFactory {
 
         );
         if (childList.isEmpty()) {
-            return child;
+            return Optional.empty();
         } else {
             child.setChildren(childList);
             child.setParents(adultList);
-            return child;
+            return Optional.of(child);
         }
     }
 }

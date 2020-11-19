@@ -1,7 +1,7 @@
 package com.safetynet.web.controller;
 
 import com.safetynet.dto.*;
-import com.safetynet.service.FirestationService;
+import com.safetynet.service.IFirestationService;
 import com.safetynet.web.exceptions.BadArgumentsException;
 import com.safetynet.web.exceptions.FirestationNotFoundException;
 import lombok.extern.log4j.Log4j2;
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class FirestationsController {
 
     @Autowired
-    FirestationService firestationService;
+    IFirestationService firestationService;
 
     @GetMapping(value = "firestation/all")
     public List<FirestationsDTO> readAllFirestations() {
@@ -93,6 +93,7 @@ public class FirestationsController {
 
     /**
      * List person for number station and count by age
+     *
      * @param stationNumber
      * @return list Person
      */
@@ -108,11 +109,7 @@ public class FirestationsController {
 
     }
 
-    /**
-     * List of the telephone numbers of residents served by the fire station
-     * @param stationNumber
-     * @return list phone
-     */
+
     @GetMapping(value = "phoneAlert")
     public ResponseEntity<List<PersonsPhoneDTO>> phoneAlerte(@RequestParam String firestation) {
         log.info("GET search person phone for number station : {}", firestation);
@@ -126,9 +123,14 @@ public class FirestationsController {
     }
 
     @GetMapping(value = "childAlert")
-    public ChildStationDTO childAlertStation(@RequestParam String address) {
+    public ResponseEntity<ChildStationDTO> childAlertStation(@RequestParam String address) {
         log.info("GET search lis child for adress and list person of family : {} : ", address);
-        return firestationService.getChildAlertStation(address);
+        if (address.isBlank()) {
+            throw new BadArgumentsException("GET : Address station is  not null for create list child");
+        }
+        return ResponseEntity.status(HttpStatus.OK.value())
+                .body(firestationService.getChildAlertStation(address)
+                        .orElseThrow(FirestationNotFoundException::new));
 
     }
 

@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Log4j2
 @Service
-public class PersonsService {
+public class PersonsService implements IPersonsService {
 
     @Autowired
     RepositoryService repositorPersons;
@@ -31,6 +31,7 @@ public class PersonsService {
     @Autowired
     ServiceFactory serviceFactory;
 
+    @Override
     public List<PersonsDto> getReadAllpersons() {
         List<PersonsDto> list = new ArrayList<>();
         repositorPersons.getPersonsRepository().findAll().forEach(persons ->
@@ -41,16 +42,19 @@ public class PersonsService {
         return list;
     }
 
+    @Override
     public Optional<PersonsDto> addPersons(PersonsDto persons) {
         Optional<Persons> person = repositorPersons.getPersonsRepository().add(personUnMapper.getDestination(persons));
         return Optional.of(personMapper.getDestination(person.get()));
     }
 
 
+    @Override
     public boolean deletePerson(PersonsDto person) {
         return repositorPersons.getPersonsRepository().delete(personUnMapper.getDestination(person));
     }
 
+    @Override
     public Optional<PersonsDto> updatePerson(PersonsDto personsDto) {
         Optional<Persons> person = repositorPersons.getPersonsRepository().update(personUnMapper.getDestination(personsDto));
         if (person.isPresent()) {
@@ -60,13 +64,8 @@ public class PersonsService {
         }
     }
 
-    /**
-     * Construct List all the people with the same names
-     *
-     * @param firstName
-     * @param lastName
-     * @return list person with sames names
-     */
+
+    @Override
     public Optional<List<PersonsMedicationAdresseDTO>> getPersonInfo(String firstName, String lastName) {
         List<PersonsMedicationAdresseDTO> dtoList = new ArrayList<>();
         repositorPersons.getPersonsRepository().searchAllName(lastName, firstName)
@@ -84,12 +83,7 @@ public class PersonsService {
         return Optional.of(dtoList);
     }
 
-    /**
-     * Construct List the email addresses of all the inhabitants of the city
-     *
-     * @param city
-     * @return List the email
-     */
+    @Override
     public Optional<List<PersonsEmailDTO>> getPersonsEmail(String city) {
         List<PersonsEmailDTO> dtoList = new ArrayList<>();
         repositorPersons.getPersonsRepository()
@@ -104,6 +98,7 @@ public class PersonsService {
         return Optional.of(dtoList);
     }
 
+    @Override
     public Optional<Persons> getFindPerson(String nom, String prenom) {
         log.info("Entre dans read Person by Elements " + nom + " " + prenom);
         return repositorPersons.getPersonsRepository().findByElements(nom, prenom);

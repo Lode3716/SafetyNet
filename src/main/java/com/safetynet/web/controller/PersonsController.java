@@ -4,6 +4,7 @@ import com.safetynet.dto.PersonsDto;
 import com.safetynet.dto.PersonsEmailDTO;
 import com.safetynet.dto.PersonsMedicationAdresseDTO;
 import com.safetynet.model.Persons;
+import com.safetynet.service.IPersonsService;
 import com.safetynet.service.PersonsService;
 import com.safetynet.web.exceptions.BadArgumentsException;
 import com.safetynet.web.exceptions.PersonsNotFoundException;
@@ -23,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class PersonsController {
 
     @Autowired
-    PersonsService personsService;
+    IPersonsService personsService;
 
     @GetMapping(value = "persons")
     public List<PersonsDto> readAllpersons() {

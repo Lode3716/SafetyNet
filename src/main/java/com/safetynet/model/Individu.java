@@ -8,7 +8,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString()
-@EqualsAndHashCode(of = {"firstName", "lastName"})
 public class Individu implements Serializable {
 
     private String firstName;

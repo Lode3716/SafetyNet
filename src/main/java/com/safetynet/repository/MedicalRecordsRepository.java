@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Log4j2
 @Repository
-public class MedicalRecordsRepository implements BuisnessRepo<Medicalrecords> {
+public class MedicalRecordsRepository implements IMedicalRecordsRepository {
 
     @Autowired
     Database database;

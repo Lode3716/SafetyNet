@@ -42,11 +42,12 @@ public class Database {
     public void init() {
         personsList = findAllInitPersonne();
         medicalrecordsList = findAllInitMedicalrecords();
+        log.info("DataBase initialization : create MedicalRecords.");
         firestationsList = findAllInitFirestation();
         contrustPersonsList();
-        log.debug("Creation des associations Personns.");
+        log.info("DataBase initialization : create Personns.");
         constructListFireStation();
-        log.debug("Creation des associations Firestations.");
+        log.info("DataBase initialization : create Firestations.");
     }
 
 
@@ -64,13 +65,13 @@ public class Database {
                             persons2.add(persons);
 
                         } catch (JsonProcessingException e) {
-                            log.error("Une erreur c'est produite lors de la lecture du JSON Personn : "+e.getMessage());
+                            log.error("An error occurred while reading the JSON Personn : {}",e.getMessage());
                         }
                     });
         } catch (IOException e) {
-            log.error("Une erreur c'est produite lors de la creation de la dataBase Personn : "+e.getMessage());
+            log.error("An error occurred while creating the dataBase Personn : {}",e.getMessage());
         }
-        log.info("Initialisation de la liste Personn de la Database : "+persons2.size());
+        log.info("Initialization of the Personal list of the : "+persons2.size());
         return persons2;
     }
 
@@ -88,14 +89,14 @@ public class Database {
                                 firestationsList.add(firestations);
                             }
                         } catch (JsonProcessingException e) {
-                            log.error("Une erreur c'est produite lors de la lecture du JSON Firestation : "+e.getMessage());
+                            log.error("An error occurred while reading the JSON Firestation : {}",e.getMessage());
                         }
                     });
 
         } catch (IOException e) {
-            log.error("Une erreur c'est produite lors de la creation de la dataBase Firestation : "+e.getMessage());
+            log.error("An error occurred while creating the dataBase Firestation : {}",e.getMessage());
         }
-        log.debug("Initialisation de la liste Firestation de la Database : "+firestationsList.size());
+        log.debug("Initialization of the Database Firestation list : {}",firestationsList.size());
         return firestationsList;
     }
 
@@ -118,13 +119,13 @@ public class Database {
                             Medicalrecords medicalrecords = objectMapper.treeToValue(s, Medicalrecords.class);
                             medicalrecordsList.add(medicalrecords);
                         } catch (JsonProcessingException e) {
-                            log.error("Une erreur c'est produite lors de la lecture du JSON Medicalrecords : "+e.getMessage());
+                            log.error("An error occurred while reading the JSON Medicalrecords : "+e.getMessage());
                         }
                     });
         } catch (IOException e) {
-            log.error("Initialisation de la liste Medicalrecords de la Database : "+e.getMessage());
+            log.error("An error occurred while creating the dataBase  Database : {}",e.getMessage());
         }
-        log.debug("Initialisation de la liste Medicalrecords de la Database : "+medicalrecordsList.size());
+        log.debug("Initialization of the Database Medicalrecords list : {}",medicalrecordsList.size());
         return medicalrecordsList;
     }
 

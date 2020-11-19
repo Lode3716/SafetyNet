@@ -177,11 +177,11 @@ class PersonsControllerIT {
     @DisplayName("Given param FirstName and LastName exist, when requesting GET, then requesting a list PersonsMedicationAdresseDTO")
     public void givenFirstNameAndLastName_whenGetRequest_thenReturnListPersonsMedicationAdresseDTO() throws Exception {
         mvc.perform(get("/personInfo")
-                .queryParam("firstName","John")
-                .queryParam("lastName","Boyd")
+                .queryParam("firstName","Ron")
+                .queryParam("lastName","Peters")
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Matchers.hasSize(6)));
+                .andExpect(jsonPath("$", Matchers.hasSize(2)));
     }
 
     @Test

@@ -126,18 +126,18 @@ class FirestationsControllerIT {
     @Test
     @DisplayName("Given firestation update , when requesting PUT, then requesting firestation update the station and the status http is OK")
     public void givenFirestationUpdate_whenPutRequest_thenReturnUpdateFirestation() throws Exception {
-        Firestations firestation = new Firestations("5", "951 LoneTree Rd");
+        Firestations firestation = new Firestations("5", "834 Binoc Ave");
 
         mvc.perform(MockMvcRequestBuilders.put("/firestation")
                 .content(asJsonString(firestation))
                 .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.station").value("5"))
-                .andExpect(jsonPath("$.address").value("951 LoneTree Rd"));
+                .andExpect(jsonPath("$.address").value("834 Binoc Ave"));
     }
 
     @Test
-    @DisplayName("Given null id firestation, when PUT request, then throws a BadArgumentsException")
+    @DisplayName("Given null id firestation upadte, when PUT request, then throws a BadArgumentsException")
     public void givenFirestationNull_whenPutRequest_thenReturnBadArgumentsException() throws Exception {
         FirestationsDTO firestationsDTO = new FirestationsDTO("", "Château de Moulinsart");
 
@@ -147,14 +147,14 @@ class FirestationsControllerIT {
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof BadArgumentsException))
-                .andExpect(result -> assertEquals("PUT : Station or adress are not null for create Firestation", result.getResolvedException().getMessage()));
+                .andExpect(result -> assertEquals("PUT : Station or adress are not null for update firestation", result.getResolvedException().getMessage()));
 
     }
 
     @Test
-    @DisplayName("Given firestation not exist , when PUT request, throws a FirestationNotFoundException")
+    @DisplayName("Given firestation not exist update, when PUT request, throws a FirestationNotFoundException")
     public void givenFirestationNotExist_whenPutRequest_thenReturnFirestationNotFoundException() throws Exception {
-        FirestationsDTO firestationsDTO = new FirestationsDTO("3", "7 rue Tintin");
+        FirestationsDTO firestationsDTO = new FirestationsDTO("9", "7 rue Tintin");
 
         mvc.perform(MockMvcRequestBuilders.put("/firestation")
                 .content(asJsonString(firestationsDTO))
@@ -166,15 +166,6 @@ class FirestationsControllerIT {
     @Test
     @DisplayName("Given id Station , when GET request, then requesting list person for number station and count by age")
     public void givenIdStation_whenGetRequest_thenReturnPersonsBelongFireStation() throws Exception {
-        PersonsFirestationDTO pers1 = new PersonsFirestationDTO("Lily", "Cooper", "489 Manchester St", "841-874-9845");
-        PersonsFirestationDTO pers2 = new PersonsFirestationDTO("Tony", "Cooper", "112 Steppes Pl", "841-874-6874");
-        PersonsFirestationDTO pers3 = new PersonsFirestationDTO("Ron", "Peters", "112 Steppes Pl", "841-874-8888");
-        PersonsFirestationDTO pers4 = new PersonsFirestationDTO("Allison", "Boyd", "112 Steppes Pl", "841-874-9888");
-        List<PersonsFirestationDTO> listPersons = new ArrayList<>();
-        listPersons.add(pers1);
-        listPersons.add(pers2);
-        listPersons.add(pers3);
-        listPersons.add(pers4);
 
         mvc.perform(MockMvcRequestBuilders.get("/firestation")
                 .queryParam("stationNumber", "4")
@@ -238,4 +229,41 @@ class FirestationsControllerIT {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof BadArgumentsException))
                 .andExpect(result -> assertEquals("GET : Station number is  not null for create list phone", result.getResolvedException().getMessage()));
     }
+
+    @Test
+    @DisplayName("Given address Station , when GET request, then requesting list of children (anyone aged 18 or under) living at that address and list parents")
+    public void givenAddressStation_whenGetRequest_thenReturnListchildAndParents() throws Exception {
+
+        mvc.perform(MockMvcRequestBuilders.get("/childAlert")
+                .queryParam("address", "1509 Culver St")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.children", Matchers.hasSize(2)))
+                .andExpect(jsonPath("$.parents", Matchers.hasSize(2)))
+                .andExpect(jsonPath("$.children[0].firstName", Matchers.is("Tenley")))
+                .andExpect(jsonPath("$.children[0].lastName", Matchers.is("Boyd")))
+                .andExpect(jsonPath("$.children[0].age", Matchers.is(8)));
+    }
+
+    @Test
+    @DisplayName("Given adress Station not exist , when Get request, throws a FirestationNotFoundException")
+    public void givenAddressStationNotExist_whenGetRequest_thenReturnFirestationNotFoundException() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/childAlert")
+                .queryParam("address", "1508 Culver St")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof FirestationNotFoundException));
+    }
+
+    @Test
+    @DisplayName("Given adress Station null , when Get request, then throws a BadArgumentsException")
+    public void givenAdressNull_whenGetRequest_thenReturnBadArgumentsException() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/childAlert")
+                .queryParam("address", "")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof BadArgumentsException))
+                .andExpect(result -> assertEquals("GET : Address station is  not null for create list child", result.getResolvedException().getMessage()));
+    }
+
 }

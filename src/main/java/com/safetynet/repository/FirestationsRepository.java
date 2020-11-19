@@ -84,12 +84,7 @@ public class FirestationsRepository implements IFirestationsRepository {
         }
     }
 
-    /**
-     * List all station by id
-     *
-     * @param idSation
-     * @return List firestation
-     */
+
     @Override
     public List<Firestations> personsBelongFirestation(String idSation) {
         return database.getFirestationsList()
@@ -115,11 +110,6 @@ public class FirestationsRepository implements IFirestationsRepository {
         return Optional.ofNullable(atomPersons.get()).orElse(Collections.emptyList());
     }
 
-    /**
-     * Associates List person living at this address of the fire station
-     *
-     * @param firestation
-     */
     @Override
     public void constructFirestation(Firestations firestation) {
         database.getFirestationsList()
