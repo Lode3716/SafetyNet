@@ -10,13 +10,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Log4j2
 @Repository
-public class FirestationsRepository implements BuisnessRepo<Firestations> {
+public class FirestationsRepository implements IFirestationsRepository {
 
 
     @Autowired
@@ -51,7 +50,7 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
 
             log.info("Repository after firestation delete : {}" + database.getFirestationsList().size());
             log.info("Repository firestation - DELETE");
-        return Boolean.TRUE;
+            return Boolean.TRUE;
         }
         return Boolean.FALSE;
     }
@@ -65,7 +64,7 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
 
     @Override
     public Optional<Firestations> update(Firestations firestation) {
-        AtomicReference<Firestations> atoFirestation=new AtomicReference<>();
+        AtomicReference<Firestations> atoFirestation = new AtomicReference<>();
         database.getFirestationsList().stream()
                 .filter(search -> firestation.getAddress().equals(search.getAddress()))
                 .findFirst()
@@ -76,21 +75,22 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
                     log.info("Repository : Mise à jour de la firestation {}", firestation.getStation());
                     atoFirestation.set(maj);
                 });
-       if(Optional.ofNullable(atoFirestation.get()).isPresent())
-        {
+        if (Optional.ofNullable(atoFirestation.get()).isPresent()) {
             log.info("Repository : firestation update  - succes ");
             return Optional.of(atoFirestation.get());
-        }else{
-           log.info("Repository : firestation not exist - not update");
-           return Optional.empty();
+        } else {
+            log.info("Repository : firestation not exist - not update");
+            return Optional.empty();
         }
     }
 
     /**
      * List all station by id
+     *
      * @param idSation
      * @return List firestation
      */
+    @Override
     public List<Firestations> personsBelongFirestation(String idSation) {
         return database.getFirestationsList()
                 .stream()
@@ -99,19 +99,20 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
 
     }
 
+    @Override
     public List<Persons> personsAdress(String station) {
-        AtomicReference<List<Persons>> atomPersons=new AtomicReference<>();
-         database.getFirestationsList()
+        AtomicReference<List<Persons>> atomPersons = new AtomicReference<>();
+        database.getFirestationsList()
                 .stream()
                 .filter(stattion -> station.equals(stattion.getAddress()))
                 .forEach(firestations ->
-                        {
-                            Optional.ofNullable(firestations.getPersonsList())
-                                    .ifPresent(list->atomPersons.set(list));
+                {
+                    Optional.ofNullable(firestations.getPersonsList())
+                            .ifPresent(list -> atomPersons.set(list));
 
-                        });
+                });
 
-         return Optional.ofNullable(atomPersons.get()).orElse(Collections.emptyList());
+        return Optional.ofNullable(atomPersons.get()).orElse(Collections.emptyList());
     }
 
     /**
@@ -119,7 +120,8 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
      *
      * @param firestation
      */
-    private void constructFirestation(Firestations firestation) {
+    @Override
+    public void constructFirestation(Firestations firestation) {
         database.getFirestationsList()
                 .stream()
                 .filter(station -> firestation.getStation().equals(station.getStation()) && firestation.getAddress().equals(station.getAddress()))
@@ -127,7 +129,7 @@ public class FirestationsRepository implements BuisnessRepo<Firestations> {
                 .ifPresent(station ->
                 {
                     Optional.ofNullable(personsAdress(station.getAddress()))
-                            .ifPresent(listPersons->station.setPersonsList(listPersons));
+                            .ifPresent(listPersons -> station.setPersonsList(listPersons));
                     log.debug("Repository after firestation with list person  : {}", station.getPersonsList().size());
                 });
     }

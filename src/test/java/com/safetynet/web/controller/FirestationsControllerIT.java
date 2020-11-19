@@ -3,14 +3,11 @@ package com.safetynet.web.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.dto.FirestationsDTO;
 import com.safetynet.dto.PersonsBelongFirestationDTO;
-import com.safetynet.dto.PersonsDto;
 import com.safetynet.dto.PersonsFirestationDTO;
 import com.safetynet.model.Firestations;
-import com.safetynet.model.Persons;
 import com.safetynet.repository.RepositoryService;
 import com.safetynet.web.exceptions.BadArgumentsException;
 import com.safetynet.web.exceptions.FirestationNotFoundException;
-import com.safetynet.web.exceptions.PersonsNotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +22,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -180,13 +176,14 @@ class FirestationsControllerIT {
         listPersons.add(pers3);
         listPersons.add(pers4);
 
-        PersonsBelongFirestationDTO personsBelong = new PersonsBelongFirestationDTO(listPersons, 4, 0);
-
         mvc.perform(MockMvcRequestBuilders.get("/firestation")
                 .queryParam("stationNumber", "4")
                 .accept(APPLICATION_JSON))
-                .andExpect(status().isOk());
-                //.andExpect(jsonPath("$").value(asJsonString(personsBelong)));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.listPersons", Matchers.hasSize(4)))
+                .andExpect(jsonPath("$.countAdult", Matchers.is(4)))
+                .andExpect(jsonPath("$.countChild", Matchers.is(0)))
+                .andExpect(jsonPath("$.listPersons[0].firstName", Matchers.is("Lily")));
     }
 
     @Test

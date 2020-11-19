@@ -3,7 +3,7 @@ package com.safetynet.repository;
 
 public interface RepositoryService {
 
-    FirestationsRepository getFirestationsRepository();
+    IFirestationsRepository getFirestationsRepository();
 
     MedicalRecordsRepository getMedicalrecordsRepository();
 
