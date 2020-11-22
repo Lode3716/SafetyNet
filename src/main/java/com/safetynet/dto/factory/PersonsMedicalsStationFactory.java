@@ -26,6 +26,7 @@ public class PersonsMedicalsStationFactory {
                                 });
                             }, () -> personsMedicalsList.add(createPersonMedical(persons, "")));
                 });
+
         return personsMedicalsList;
     }
 

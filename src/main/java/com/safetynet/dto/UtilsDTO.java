@@ -19,7 +19,7 @@ public class UtilsDTO {
                     .getYears());
 
         } catch (DateTimeException ex) {
-            log.error("La date pour le calcul de l'age est invalide. / error :" + ex.getMessage());
+            log.error("The date for the age calculation is invalid : {}" , ex.getMessage());
             return Optional.empty();
         }
     }

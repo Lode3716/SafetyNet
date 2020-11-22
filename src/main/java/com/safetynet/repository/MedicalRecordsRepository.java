@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Log4j2
 @Repository
@@ -48,6 +49,7 @@ public class MedicalRecordsRepository implements IMedicalRecordsRepository {
     @Override
     public Optional<Medicalrecords> update(Medicalrecords medicalrecords) {
         if (exist(medicalrecords)) {
+            AtomicReference<Medicalrecords> medical= new AtomicReference<>();
             database.getMedicalrecordsList()
                     .stream()
                     .filter(search -> medicalrecords.getLastName().equals(search.getLastName()) && medicalrecords.getFirstName().equals(search.getFirstName()))
@@ -57,8 +59,10 @@ public class MedicalRecordsRepository implements IMedicalRecordsRepository {
                         maj.setBirthdate(medicalrecords.getBirthdate());
                         maj.setAllergies(medicalrecords.getAllergies());
                         maj.setMedications(medicalrecords.getMedications());
+                        medical.set(maj);
                     });
-            return Optional.of(medicalrecords);
+            log.info("Repository : update succes in BDD");
+            return Optional.of(medical.get());
         }
         return Optional.empty();
     }

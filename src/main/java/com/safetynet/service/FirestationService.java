@@ -69,7 +69,7 @@ public class FirestationService implements IFirestationService {
         List<Firestations> station = repositorFirestations
                 .getFirestationsRepository()
                 .personsBelongFirestation(stationNumber);
-        log.info("Service : Number station for create persons {}",station.size());
+        log.info("Service : Number station for create persons {}", station.size());
         if (station.size() == 0) {
             return Optional.empty();
         }
@@ -82,7 +82,7 @@ public class FirestationService implements IFirestationService {
         List<Firestations> station = repositorFirestations
                 .getFirestationsRepository()
                 .personsBelongFirestation(firestation_number);
-        log.info("Service : Number station for create list phones {}",station.size());
+        log.info("Service : Number station for create list phones {}", station.size());
         if (station.size() == 0) {
             return Optional.empty();
         }
@@ -94,7 +94,7 @@ public class FirestationService implements IFirestationService {
         List<Persons> persons = repositorFirestations
                 .getFirestationsRepository()
                 .personsAdress(address);
-        log.info("Service : Adress station child live and parents list {}",persons.size());
+        log.info("Service : Adress station child live and parents list {}", persons.size());
         if (persons.size() == 0 || serviceFactory.getChildStationFactory().createChildStationDTO(persons).isEmpty()) {
             return Optional.empty();
         }
@@ -103,30 +103,37 @@ public class FirestationService implements IFirestationService {
     }
 
     @Override
-    public List<PersonsMedicalStationDTO> getFireAdress(String address) {
+    public Optional<List<PersonsMedicalStationDTO>> getFireAdress(String address) {
         List<Persons> persons = repositorFirestations
                 .getFirestationsRepository()
                 .personsAdress(address);
-        return serviceFactory.getPersonsMedicalsStationFactory().createPersonsMedicals(persons);
+        log.info("Service : Adress station list persons lives {}", persons.size());
+        if (persons.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(serviceFactory.getPersonsMedicalsStationFactory().createPersonsMedicals(persons));
     }
 
     @Override
-    public Map<FirestationsDTO, List<PersonsMedicalsDTO>> getFloodStation(List<String> stations) {
+    public Optional<Map<FirestationsDTO, List<PersonsMedicalsDTO>>> getFloodStation(List<String> stations) {
         Map<FirestationsDTO, List<PersonsMedicalsDTO>> retour = new HashMap<>();
         stations.forEach(stat ->
         {
-            log.info(stat);
             repositorFirestations
                     .getFirestationsRepository()
                     .personsBelongFirestation(stat)
                     .forEach(firestation ->
                     {
                         List<PersonsMedicalsDTO> personeMedicalsList = serviceFactory.getPersonsMedicalsFactory().createPersonsMedicals(firestation.getPersonsList(), stat);
-                        retour.put(firestationsMapper.getDestination(firestation), personeMedicalsList);
-
+                        if (personeMedicalsList.size() > 0) {
+                            retour.put(firestationsMapper.getDestination(firestation), personeMedicalsList);
+                        }
                     });
         });
-        return retour;
+        if (retour.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(retour);
     }
 
 }

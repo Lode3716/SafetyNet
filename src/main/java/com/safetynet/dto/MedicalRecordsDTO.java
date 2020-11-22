@@ -1,11 +1,15 @@
 package com.safetynet.dto;
 
 import com.googlecode.jmapper.annotations.JGlobalMap;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @JGlobalMap
 public class MedicalRecordsDTO {
 

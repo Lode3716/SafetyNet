@@ -2,8 +2,7 @@ package com.safetynet.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.safetynet.dto.FirestationsDTO;
-import com.safetynet.dto.PersonsBelongFirestationDTO;
-import com.safetynet.dto.PersonsFirestationDTO;
+
 import com.safetynet.model.Firestations;
 import com.safetynet.repository.RepositoryService;
 import com.safetynet.web.exceptions.BadArgumentsException;
@@ -20,15 +19,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Log4j2
 @ExtendWith(SpringExtension.class)
@@ -266,4 +261,65 @@ class FirestationsControllerIT {
                 .andExpect(result -> assertEquals("GET : Address station is  not null for create list child", result.getResolvedException().getMessage()));
     }
 
+    @Test
+    @DisplayName("Given address Station , when GET request, then requesting list of inhabitants living at the given address as well as the number of the fire station serving it")
+    public void givenAddressStation_whenGetRequest_thenReturnListPersonsMedicalBackground() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/fire")
+                .queryParam("address", "1509 Culver St")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.hasSize(4)));
+    }
+
+    @Test
+    @DisplayName("Given address Station not exist, when GET request, throws a FirestationNotFoundException")
+    public void givenAddressNotExist_whenGetRequest_thenReturnFirestationNotFoundException() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/fire")
+                .queryParam("address", "1508 Culver St")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof FirestationNotFoundException));
+    }
+
+    @Test
+    @DisplayName("Given address Station is null, when GET request, the requestion throws a BadArgumentsException")
+    public void givenAddressStationIsNull_whenGetRequest_thenReturnBadArgumentsException() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/fire")
+                .queryParam("address", "")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof BadArgumentsException))
+                .andExpect(result -> assertEquals("GET : Address station is  not null for create list persons", result.getResolvedException().getMessage()));
+    }
+
+    @Test
+    @DisplayName("Given list number station , when GET request, then requesting list of all the homes served by the firestation, it groups the people by address.")
+    public void givenListNumberStation_whenGetRequest_thenReturnListPersonsHomeServedFirestation() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/flood/")
+                .queryParam("stations", "2,3")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.aMapWithSize(6)));
+    }
+
+    @Test
+    @DisplayName("Given list number station not exist, when GET request, throws a FirestationNotFoundException")
+    public void givenListNumerNotExist_whenGetRequest_thenReturnFirestationNotFoundException() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/flood/")
+                .queryParam("stations", "8")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof FirestationNotFoundException));
+    }
+
+    @Test
+    @DisplayName("Given list number station is null, when GET request, the requestion throws a BadArgumentsException")
+    public void givenLsitNumberIsNull_whenGetRequest_thenReturnBadArgumentsException() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/flood/")
+                .queryParam("stations", "")
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof BadArgumentsException))
+                .andExpect(result -> assertEquals("GET : List station number is not null for create list persons", result.getResolvedException().getMessage()));
+    }
 }

@@ -10,9 +10,9 @@ public interface IMedicalRecordsService {
 
     List<MedicalRecordsDTO> findAll();
 
-    Optional<Medicalrecords> add(MedicalRecordsDTO medicalRecordsDTO);
+    Optional<MedicalRecordsDTO> add(MedicalRecordsDTO medicalRecordsDTO);
 
-    Optional<Medicalrecords> update(MedicalRecordsDTO medicalRecordsDTO);
+    Optional<MedicalRecordsDTO> update(MedicalRecordsDTO medicalRecordsDTO);
 
     Boolean delete(MedicalRecordsDTO medicalRecordsDTO);
 }

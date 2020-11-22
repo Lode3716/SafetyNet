@@ -38,7 +38,17 @@ public interface IFirestationService {
      */
     Optional<ChildStationDTO> getChildAlertStation(String address);
 
-    List<PersonsMedicalStationDTO> getFireAdress(String address);
+    /**
+     * list of inhabitants living at the given address as well as the number of the fire station serving it
+     * @param address
+     * @return Optional List Person with medication
+     */
+    Optional<List<PersonsMedicalStationDTO>> getFireAdress(String address);
 
-    Map<FirestationsDTO, List<PersonsMedicalsDTO>> getFloodStation(List<String> stations);
+    /**
+     * list of all the homes served by the firestation, it groups the people by address.
+     * @param stations
+     * @return Optional Map Firestation by list persons
+     */
+    Optional<Map<FirestationsDTO, List<PersonsMedicalsDTO>>> getFloodStation(List<String> stations);
 }

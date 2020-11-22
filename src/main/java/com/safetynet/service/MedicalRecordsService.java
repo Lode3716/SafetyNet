@@ -2,6 +2,7 @@ package com.safetynet.service;
 
 import com.googlecode.jmapper.JMapper;
 import com.safetynet.dto.MedicalRecordsDTO;
+import com.safetynet.model.Firestations;
 import com.safetynet.model.Medicalrecords;
 import com.safetynet.repository.RepositoryService;
 import lombok.extern.log4j.Log4j2;
@@ -33,19 +34,28 @@ public class MedicalRecordsService implements IMedicalRecordsService {
         {
             list.add(medicalRecordsMapper.getDestination(medeicals));
         });
-        log.debug("Service : Retourne la liste contruite de medical Records DTO {}", list.size());
+        log.debug("Service : all list medical Records DTO {}", list.size());
         return list;
     }
 
     @Override
-    public Optional<Medicalrecords> add(MedicalRecordsDTO medicalRecordsDTO) {
-        return repositorMedicalRecords.getMedicalrecordsRepository()
-                .add(medicalRecordsUnMapper.getDestination(medicalRecordsDTO));
+    public Optional<MedicalRecordsDTO> add(MedicalRecordsDTO medicalRecordsDTO) {
+        Medicalrecords medical= repositorMedicalRecords.getMedicalrecordsRepository()
+                .add(medicalRecordsUnMapper.getDestination(medicalRecordsDTO)).get();
+        return Optional.of(medicalRecordsMapper.getDestination(medical));
     }
 
     @Override
-    public Optional<Medicalrecords> update(MedicalRecordsDTO medicalRecordsDTO) {
-        return repositorMedicalRecords.getMedicalrecordsRepository().update(medicalRecordsUnMapper.getDestination(medicalRecordsDTO));
+    public Optional<MedicalRecordsDTO> update(MedicalRecordsDTO medicalRecordsDTO)
+    {
+        Optional<Medicalrecords> medical= repositorMedicalRecords.getMedicalrecordsRepository().update(medicalRecordsUnMapper.getDestination(medicalRecordsDTO));
+
+        if (medical.isPresent()) {
+            log.info("Service : Update medical record - Success {}", medical.get());
+            return Optional.of(medicalRecordsMapper.getDestination(medical.get()));
+        }else{
+            return Optional.empty();
+        }
     }
 
     @Override
