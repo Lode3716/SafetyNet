@@ -1,10 +1,8 @@
 package com.safetynet.web.controller;
 
 import com.safetynet.dto.MedicalRecordsDTO;
-import com.safetynet.model.Medicalrecords;
 import com.safetynet.service.IMedicalRecordsService;
 import com.safetynet.web.exceptions.BadArgumentsException;
-import com.safetynet.web.exceptions.FirestationNotFoundException;
 import com.safetynet.web.exceptions.MedicalrecordsNotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +53,7 @@ public class MedicalRecordsController {
         }
         return ResponseEntity.status(HttpStatus.OK.value())
                 .body(medicalRecordsService.update(medicalRecord)
-                .orElseThrow(MedicalrecordsNotFoundException::new));
+                        .orElseThrow(MedicalrecordsNotFoundException::new));
     }
 
     @DeleteMapping(value = "medicalRecord")

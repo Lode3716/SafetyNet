@@ -234,7 +234,7 @@ class FirestationsControllerIT {
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.children", Matchers.hasSize(2)))
-                .andExpect(jsonPath("$.parents", Matchers.hasSize(2)))
+                .andExpect(jsonPath("$.parents", Matchers.hasSize(3)))
                 .andExpect(jsonPath("$.children[0].firstName", Matchers.is("Tenley")))
                 .andExpect(jsonPath("$.children[0].lastName", Matchers.is("Boyd")))
                 .andExpect(jsonPath("$.children[0].age", Matchers.is(8)));
@@ -268,7 +268,7 @@ class FirestationsControllerIT {
                 .queryParam("address", "1509 Culver St")
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Matchers.hasSize(4)));
+                .andExpect(jsonPath("$", Matchers.hasSize(5)));
     }
 
     @Test

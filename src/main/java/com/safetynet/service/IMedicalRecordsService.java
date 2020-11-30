@@ -1,7 +1,6 @@
 package com.safetynet.service;
 
 import com.safetynet.dto.MedicalRecordsDTO;
-import com.safetynet.model.Medicalrecords;
 
 import java.util.List;
 import java.util.Optional;

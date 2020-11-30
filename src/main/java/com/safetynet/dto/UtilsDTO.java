@@ -20,8 +20,8 @@ public class UtilsDTO {
 
         } catch (DateTimeException ex) {
             log.error("The date for the age calculation is invalid : {}" , ex.getMessage());
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     public Optional<Boolean> adultOrNot(String birthday) {

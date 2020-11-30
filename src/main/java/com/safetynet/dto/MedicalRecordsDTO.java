@@ -1,13 +1,12 @@
 package com.safetynet.dto;
 
 import com.googlecode.jmapper.annotations.JGlobalMap;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JGlobalMap
