@@ -2,9 +2,9 @@ package com.safetynet.dto;
 
 import org.junit.jupiter.api.Test;
 
-import java.time.DateTimeException;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class UtilsDTOTest {
 
@@ -21,14 +21,6 @@ class UtilsDTOTest {
 
     }
 
-    @Test
-    public void calculateAge_thenIllegallDateThrown() {
-        String birthday = "15/15/2000";
-        Throwable thrown = catchThrowable(() -> utilsDTO.calculAge(birthday));
-        assertThat(thrown)
-                .isInstanceOf(Exception.class)
-                .hasCauseExactlyInstanceOf(DateTimeException.class);
-    }
 
     @Test
     public void adultOrNot_returnTrueIfAdult() {
@@ -44,6 +36,12 @@ class UtilsDTOTest {
 
         assertThat(utilsDTO.adultOrNot(birthday).get()).isEqualTo(false);
 
+    }
+
+    @Test
+    public void calculateAge_returnOptionalEmpty() {
+
+        assertThat(utilsDTO.adultOrNot("")).isEqualTo(Optional.empty());
     }
 
 }

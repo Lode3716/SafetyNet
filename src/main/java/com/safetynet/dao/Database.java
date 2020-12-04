@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 public class Database {
 
     @Getter
-    private static List<Persons> personsList;
+    public static List<Persons> personsList;
     @Getter
-    private static List<Medicalrecords> medicalrecordsList;
+    public static List<Medicalrecords> medicalrecordsList;
     @Getter
     private static List<Firestations> firestationsList;
 
@@ -36,7 +36,6 @@ public class Database {
 
     public Database() {
     }
-
 
     @PostConstruct
     public void init() {
@@ -65,13 +64,13 @@ public class Database {
                             persons2.add(persons);
 
                         } catch (JsonProcessingException e) {
-                            log.error("An error occurred while reading the JSON Personn : {}",e.getMessage());
+                            log.error("An error occurred while reading the JSON Personn : {}", e.getMessage());
                         }
                     });
         } catch (IOException e) {
-            log.error("An error occurred while creating the dataBase Personn : {}",e.getMessage());
+            log.error("An error occurred while creating the dataBase Personn : {}", e.getMessage());
         }
-        log.info("Initialization of the Personal list of the : "+persons2.size());
+        log.info("Initialization of the Personal list of the : " + persons2.size());
         return persons2;
     }
 
@@ -85,23 +84,22 @@ public class Database {
                         try {
                             ObjectMapper objectMapper = new ObjectMapper();
                             Firestations firestations = objectMapper.treeToValue(s, Firestations.class);
-                            if(!firestationExist(firestationsList,firestations)) {
+                            if (!firestationExist(firestationsList, firestations)) {
                                 firestationsList.add(firestations);
                             }
                         } catch (JsonProcessingException e) {
-                            log.error("An error occurred while reading the JSON Firestation : {}",e.getMessage());
+                            log.error("An error occurred while reading the JSON Firestation : {}", e.getMessage());
                         }
                     });
 
         } catch (IOException e) {
-            log.error("An error occurred while creating the dataBase Firestation : {}",e.getMessage());
+            log.error("An error occurred while creating the dataBase Firestation : {}", e.getMessage());
         }
-        log.debug("Initialization of the Database Firestation list : {}",firestationsList.size());
+        log.debug("Initialization of the Database Firestation list : {}", firestationsList.size());
         return firestationsList;
     }
 
-    private boolean firestationExist(List<Firestations> list,Firestations firestation)
-    {
+    private boolean firestationExist(List<Firestations> list, Firestations firestation) {
         return list.stream()
                 .anyMatch(search -> firestation.getAddress().equals(search.getAddress()) && firestation.getStation().equals(search.getStation()));
     }
@@ -119,13 +117,13 @@ public class Database {
                             Medicalrecords medicalrecords = objectMapper.treeToValue(s, Medicalrecords.class);
                             medicalrecordsList.add(medicalrecords);
                         } catch (JsonProcessingException e) {
-                            log.error("An error occurred while reading the JSON Medicalrecords : "+e.getMessage());
+                            log.error("An error occurred while reading the JSON Medicalrecords : " + e.getMessage());
                         }
                     });
         } catch (IOException e) {
-            log.error("An error occurred while creating the dataBase  Database : {}",e.getMessage());
+            log.error("An error occurred while creating the dataBase  Database : {}", e.getMessage());
         }
-        log.debug("Initialization of the Database Medicalrecords list : {}",medicalrecordsList.size());
+        log.debug("Initialization of the Database Medicalrecords list : {}", medicalrecordsList.size());
         return medicalrecordsList;
     }
 
@@ -140,28 +138,27 @@ public class Database {
                             persons.setMedicalrecords(medicalrecords);
                         }
                     });
-                    List<Firestations> listFires=new ArrayList<>();
+                    List<Firestations> listFires = new ArrayList<>();
                     firestationsList
                             .forEach(firestations ->
-                            {
-                                if (persons.getAddress().equals(firestations.getAddress()))
-                                {
-                                    listFires.add(firestations);
-                                }
-                            }
-                    );
+                                    {
+                                        if (persons.getAddress().equals(firestations.getAddress())) {
+                                            listFires.add(firestations);
+                                        }
+                                    }
+                            );
                     persons.setFirestations(listFires);
                     return true;
                 })
-        .distinct()
-        .collect(Collectors.toList());
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     private void constructListFireStation() {
         firestationsList.forEach(station ->
                 {
-                   List<Persons> listPers= personsList.stream()
-                            .filter(pers-> pers.getAddress().equals(station.getAddress()))
+                    List<Persons> listPers = personsList.stream()
+                            .filter(pers -> pers.getAddress().equals(station.getAddress()))
                             .collect(Collectors.toList());
 
                     station.setPersonsList(listPers);

@@ -3,6 +3,8 @@ package com.safetynet.repository;
 import com.safetynet.dao.Database;
 import com.safetynet.model.Firestations;
 import com.safetynet.model.Persons;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -16,7 +18,6 @@ import java.util.stream.Collectors;
 @Log4j2
 @Repository
 public class FirestationsRepository implements IFirestationsRepository {
-
 
     @Autowired
     Database database;
